@@ -180,23 +180,25 @@ public class Main {
         System.out.println("\nDo you want to (1) stop at the next fort, (2) hunt, or (3) continue traveling?");
 
         while (choice != 3) {
-            while (choice < 1 || choice > 3) {
-                try {
-                    String input = sc.nextLine();
-                    choice = Integer.parseInt(input);
-                } catch (Exception e) {
-                    System.out.println("Please enter a number between 1 and 3");
+            if (hasVisitedFort && hasHunted) {
+                while (choice < 1 || choice > 3) {
+                    try {
+                        String input = sc.nextLine();
+                        choice = Integer.parseInt(input);
+                    } catch (Exception e) {
+                        System.out.println("Please enter a number between 1 and 3");
+                    }
                 }
-            }
 
-            switch (choice) {
-                case 1 -> {
-                    hasVisitedFort = true;
-                    traveler.buyFortSupplies();
-                }
-                case 2 -> {
-                    hasHunted = true;
-                    traveler.hunt();
+                switch (choice) {
+                    case 1 -> {
+                        hasVisitedFort = true;
+                        traveler.buyFortSupplies();
+                    }
+                    case 2 -> {
+                        hasHunted = true;
+                        traveler.hunt();
+                    }
                 }
             }
         }
