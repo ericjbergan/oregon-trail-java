@@ -6,7 +6,9 @@ import java.util.Scanner;
 
 public class Traveler {
     private int marksmanship;
+    private int daysTraveled = 0;
     private int milesTraveled = 0;
+    private int travelHandicap = 0;
     private Map<String, Integer> supplyBalances = new HashMap<>();
     private Map<String, Boolean> booleanFlags = new HashMap<>();
     private Scanner sc = new Scanner(System.in);
@@ -74,8 +76,8 @@ public class Traveler {
         this.booleanFlags.put("insuffClothing", false);
         this.booleanFlags.put("clearedSouthPass", false);
         this.booleanFlags.put("clearedBlueMountains", false);
-        this.booleanFlags.put("hasInjury", false);
-        this.booleanFlags.put("hasIllness", false);
+        this.booleanFlags.put("isInjured", false);
+        this.booleanFlags.put("isSick", false);
         this.booleanFlags.put("inBlizzard", false);
     }
 
@@ -87,12 +89,8 @@ public class Traveler {
         int misc = -1;
 
         System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
-        System.out.println("How much do you want to spend on food? Enter between 0-" +
-                supplyBalances.get("cashBalance"));
-
+        System.out.println("\nHow much do you want to spend on your oxen team? Enter between 200-300.");
         while (oxen < 200 || oxen > 300) {
-            System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
-            System.out.println("\nHow much do you want to spend on your oxen team? Enter between 200-300.");
 
             try {
                 String newInput = sc.nextLine();
@@ -106,10 +104,11 @@ public class Traveler {
                 System.out.println(e.getMessage());
             }
         }
+
+        System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
+        System.out.println("\nHow much do you want to spend on your food? Enter between 0- " +
+                supplyBalances.get("cashBalance"));
         while (food < 0 || food > supplyBalances.get("cashBalance")) {
-            System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
-            System.out.println("\nHow much do you want to spend on your food? Enter between 0- " +
-                    supplyBalances.get("cashBalance"));
 
             try {
                 String newInput = sc.nextLine();
@@ -127,11 +126,10 @@ public class Traveler {
             supplyBalances.put("food", food);
         }
 
-
+        System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
+        System.out.println("How much do you want to spend on ammunition? Enter between 0-" +
+                supplyBalances.get("cashBalance") + ". Remember, each dollar spent buys 50 bullets.");
         while (ammunition < 0 || ammunition > supplyBalances.get("cashBalance")) {
-            System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
-            System.out.println("How much do you want to spend on ammunition? Enter between 0-" +
-                    supplyBalances.get("cashBalance") + ". Remember, each dollar spent buys 50 bullets.");
 
             try {
                 String newInput = sc.nextLine();
@@ -149,10 +147,10 @@ public class Traveler {
             supplyBalances.put("ammunition", ammunition * 50);
         }
 
+        System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
+        System.out.println("How much do you want to spend on clothing? Enter between 0-" +
+                supplyBalances.get("cashBalance"));
         while (clothing < 0 || clothing > supplyBalances.get("cashBalance")) {
-            System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
-            System.out.println("How much do you want to spend on clothing? Enter between 0-" +
-                    supplyBalances.get("cashBalance"));
 
             try {
                 String newInput = sc.nextLine();
@@ -170,10 +168,10 @@ public class Traveler {
             supplyBalances.put("clothing", clothing);
         }
 
+        System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
+        System.out.println("How much do you want to spend on miscellaneous supplies? Enter between 0-" +
+                supplyBalances.get("cashBalance"));
         while (misc < 0 || misc > supplyBalances.get("cashBalance")) {
-            System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
-            System.out.println("How much do you want to spend on miscellaneous supplies? Enter between 0-" +
-                    supplyBalances.get("cashBalance"));
 
             try {
                 String newInput = sc.nextLine();
@@ -193,11 +191,28 @@ public class Traveler {
     }
 
     public void buyFortSupplies() {
-
+        // todo implement this
     }
 
     public void hunt() {
+        // todo implement this
+    }
 
+    public void visitDoctor(String reason) {
+        if (reason.equals("illness")) {
+            System.out.println("You are sick.");
+            booleanFlags.replace("isSick", false);
+        } else {
+            System.out.println("You are injured.");
+            booleanFlags.replace("isInjured", false);
+        }
+
+        supplyBalances.put("cashBalance", supplyBalances.get("cashBalance") - 20);
+        System.out.println("The doctor bill will be $20.");
+
+        if (supplyBalances.get("cashBalance") < 0) {
+            System.out.println("You can't afford a doctor. You died from your " + reason + ".");
+        }
     }
 
 }
