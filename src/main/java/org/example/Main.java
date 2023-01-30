@@ -42,7 +42,6 @@ public class Main {
             if (traveler.getTotalTurns() > 0) {
                 try {
                     System.out.println("Today's date: Monday, " + dateArray[traveler.getTotalTurns()] + ", 1847");
-                    traveler.setTotalTurns(traveler.getTotalTurns() + 1);
                 } catch (NullPointerException e) {
                     System.out.println("Happy Holidays! You took too long getting to your destination and died in the" +
                             "first blizzard of winter.");
@@ -144,7 +143,8 @@ public class Main {
                 }
             }
 
-
+            traveler.eat();
+            traveler.setTotalTurns(traveler.getTotalTurns() + 1);
         }
     }
 
@@ -195,24 +195,6 @@ public class Main {
     public static void exitGame() {
         System.out.println("Thanks for playing!");
         System.exit(0);
-    }
-
-    // todo implement this
-    public static Map<String, Integer> buyFortSupplies(Map<String, Integer> supplyBalances, Scanner sc) {
-        Map<String, Integer> newSupplyBalances = new HashMap<>(supplyBalances);
-
-
-
-        return newSupplyBalances;
-    }
-
-    // todo implement this
-    public static Map<String, Integer> hunt(Map<String, Integer> supplyBalances, Scanner sc) {
-        Map<String, Integer> newSupplyBalances = new HashMap<>(supplyBalances);
-
-
-
-        return newSupplyBalances;
     }
 
     // todo implement this

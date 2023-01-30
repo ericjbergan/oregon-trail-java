@@ -1,7 +1,9 @@
 package org.example;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Traveler {
@@ -12,6 +14,7 @@ public class Traveler {
     private Map<String, Integer> supplyBalances = new HashMap<>();
     private Map<String, Boolean> booleanFlags = new HashMap<>();
     private Scanner sc = new Scanner(System.in);
+    private Random rng = new Random();
 
     public Traveler() {
         setSupplyBalances();
@@ -135,7 +138,7 @@ public class Traveler {
             supplyBalances.put("oxen", oxen);
         }
 
-        System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
+        System.out.println("\nCurrent cash balance: " + cash);
         System.out.println("\nHow much do you want to spend on your food? Enter between 0-" + cash);
         while (food < 0 || food > cash) {
 
@@ -153,7 +156,7 @@ public class Traveler {
             supplyBalances.put("food", food);
         }
 
-        System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
+        System.out.println("\nCurrent cash balance: " + cash);
         System.out.println("How much do you want to spend on ammunition? Enter between 0-" + cash
                 + ". Remember, each dollar spent buys 50 bullets.");
         while (ammunition < 0 || ammunition > cash) {
@@ -207,6 +210,8 @@ public class Traveler {
 
             supplyBalances.put("misc", misc);
         }
+
+        supplyBalances.put("cashBalance", cash);
     }
 
     public void buyFortSupplies() {
@@ -230,11 +235,10 @@ public class Traveler {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
-            supplyBalances.put("food", supplyBalances.get("food") + newFood);
+            supplyBalances.put("food", (int) (supplyBalances.get("food") + Math.round(0.667 * newFood)));
         }
 
-        System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
+        System.out.println("\nCurrent cash balance: " + cash);
         System.out.println("How much do you want to spend on ammunition? Enter between 0-" + cash
                 + ". Remember, each dollar spent buys 50 bullets.");
         while (newAmmunition < 0 || newAmmunition > cash) {
@@ -250,7 +254,8 @@ public class Traveler {
                 System.out.println(e.getMessage());
             }
 
-            supplyBalances.put("ammunition", supplyBalances.get("ammunition") + newAmmunition * 50);
+            supplyBalances.put("ammunition", (int) (supplyBalances.get("ammunition")
+                    + Math.round(0.667 * newAmmunition) * 50));
         }
 
         System.out.println("\nCurrent cash balance: " + cash);
@@ -260,7 +265,7 @@ public class Traveler {
             try {
                 String newInput = sc.nextLine();
                 newClothing = Integer.parseInt(newInput);
-                if (newClothing < 0 || newClothing > supplyBalances.get("cashBalance")) {
+                if (newClothing < 0 || newClothing > cash) {
                     throw new IllegalArgumentException("Please enter a number between 0 and " +
                             supplyBalances.get("cashBalance"));
                 }
@@ -269,7 +274,7 @@ public class Traveler {
                 System.out.println(e.getMessage());
             }
 
-            supplyBalances.put("clothing", supplyBalances.get("clothing") + newClothing);
+            supplyBalances.put("clothing", (int) (supplyBalances.get("clothing") + Math.round(0.667 * newClothing)));
         }
 
         System.out.println("\nCurrent cash balance: " + cash);
@@ -280,21 +285,57 @@ public class Traveler {
                 String newInput = sc.nextLine();
                 newMisc = Integer.parseInt(newInput);
                 if (newMisc < 0 || newMisc > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " +
-                            supplyBalances.get("cashBalance"));
+                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
                 }
                 cash -= newMisc;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
 
-            supplyBalances.put("misc", supplyBalances.get("misc") + newMisc);
+            supplyBalances.put("misc", (int) (supplyBalances.get("misc") + Math.round(0.667 * newMisc)));
         }
 
         supplyBalances.put("cashBalance", cash);
+        if (totalTurns > 0) milesTraveled -= 45;
     }
 
     public void hunt() {
+        int index = rng.nextInt(4);
+        int newFood = 0;
+        int usedAmmo = 0;
+        String[] typeChoiceArray = new String[] {"bang", "blam", "pow", "wham"};
+        String wordToType = typeChoiceArray[index];
+
+        if (supplyBalances.get("ammunition") < 40) {
+            System.out.println("Tough---you need more bullets to go hunting");
+            return;
+        }
+
+        System.out.println("Type '" + wordToType + "' and hit enter");
+        LocalDateTime start = LocalDateTime.now();
+        String input = sc.nextLine();
+        LocalDateTime end = LocalDateTime.now();
+        int elapsedSeconds = (end.getSecond() - start.getSecond() * 2) - marksmanship - 1;
+        if (elapsedSeconds <= 1 && input.equals(wordToType)) {
+            System.out.println("Right between the eyes---you got a big one!!! Full bellies tonight!");
+            newFood = 52 + rng.nextInt(6);
+            usedAmmo = 10 + rng.nextInt(4);
+        } else if (rng.nextInt(100) > 13 * elapsedSeconds) {
+            System.out.println("Nice shot--right on target--good eatin' tonight!!");
+            newFood = 48 - 2 * elapsedSeconds;
+            usedAmmo = 10 + 3 * elapsedSeconds;
+        } else {
+            System.out.println("You missed---and your dinner got away.....");
+            usedAmmo = 10 + 3 * elapsedSeconds;
+        }
+
+        supplyBalances.put("food", supplyBalances.get("food") + newFood);
+        supplyBalances.put("ammunition", supplyBalances.get("ammunition") - usedAmmo);
+        milesTraveled -= 45;
+
+    }
+
+    public void eat() {
         // todo implement this
     }
 
