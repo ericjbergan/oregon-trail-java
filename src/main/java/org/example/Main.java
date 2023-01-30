@@ -10,6 +10,10 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         Traveler traveler = new Traveler();
+        String[] dateArray = new String[] { "April 12th", "April 26th", "May 10th", "May 24th", "June 7th",
+                "June 21st", "July 5th", "July 19th", "August 2nd", "August 16th", "August 31st", "September 13", "September 27th",
+                "October 11", "October 25th", "November 8th", "November 22nd", "December 6th", "December 20th"};
+
         String instructions = "";
 
         while (!instructions.equalsIgnoreCase("y") && !instructions.equalsIgnoreCase("n")) {
@@ -35,12 +39,29 @@ public class Main {
             boolean hasHunted = false;
             int choice = 0;
 
-            System.out.println("Today's date: "); // todo implement this
+            if (traveler.getTotalTurns() > 0) {
+                try {
+                    System.out.println("Today's date: Monday, " + dateArray[traveler.getTotalTurns()] + ", 1847");
+                    traveler.setTotalTurns(traveler.getTotalTurns() + 1);
+                } catch (NullPointerException e) {
+                    System.out.println("Happy Holidays! You took too long getting to your destination and died in the" +
+                            "first blizzard of winter.");
+                }
+            }
 
             if (traveler.getSupplyBalances().get("food") < 13) {
                 System.out.println("You'd better do some hunting or buy food and soon!!!");
             }
 
+            if (traveler.getBooleanFlags().get("isSick")) traveler.visitDoctor("illness");
+            if (traveler.getBooleanFlags().get("isInjured")) traveler.visitDoctor("injuries");
+
+            System.out.println("\nTotal mileage is " + traveler.getMilesTraveled());
+            System.out.println("Your current supplies:");
+            System.out.println("food - " + traveler.getSupplyBalances().get("food"));
+            System.out.println("ammunition - " + traveler.getSupplyBalances().get("ammunition"));
+            System.out.println("clothing - " + traveler.getSupplyBalances().get("clothing"));
+            System.out.println("misc supplies - " + traveler.getSupplyBalances().get("misc"));
 
             while (choice != 3) {
                 if (!hasVisitedFort && !hasHunted) {
@@ -123,15 +144,7 @@ public class Main {
                 }
             }
 
-            if (traveler.getBooleanFlags().get("isSick")) traveler.visitDoctor("illness");
-            if (traveler.getBooleanFlags().get("isInjured")) traveler.visitDoctor("injuries");
 
-            System.out.println("\nTotal mileage is " + traveler.getMilesTraveled());
-            System.out.println("Your current supplies:");
-            System.out.println("food - " + traveler.getSupplyBalances().get("food"));
-            System.out.println("ammunition - " + traveler.getSupplyBalances().get("ammunition"));
-            System.out.println("clothing - " + traveler.getSupplyBalances().get("clothing"));
-            System.out.println("misc supplies - " + traveler.getSupplyBalances().get("misc"));
         }
     }
 
