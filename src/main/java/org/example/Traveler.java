@@ -1,13 +1,14 @@
 package org.example;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Traveler {
     private int marksmanship;
     private int milesTraveled = 0;
-    private Map<String, Integer> supplyBalances;
-    private Map<String, Boolean> booleanFlags;
+    private Map<String, Integer> supplyBalances = new HashMap<>();
+    private Map<String, Boolean> booleanFlags = new HashMap<>();
     private Scanner sc = new Scanner(System.in);
 
     public Traveler() {
@@ -28,7 +29,7 @@ public class Traveler {
         System.out.println("(3) Fair to middlin'");
         System.out.println("(4) Need more practice");
         System.out.println("(5) Shaky knees");
-        System.out.println("Enter on of the above -- the better you claim you are, the faster you'll have to be " +
+        System.out.println("Enter one of the above -- the better you claim you are, the faster you'll have to be " +
                 "with your gun to be successful.");
 
         while (marksmanship < 1 || marksmanship > 5) {
@@ -57,6 +58,7 @@ public class Traveler {
     }
 
     public void setSupplyBalances() {
+        this.supplyBalances.put("cashBalance", 700);
         this.supplyBalances.put("oxen", -1);
         this.supplyBalances.put("food", -1);
         this.supplyBalances.put("ammunition", -1);
@@ -104,10 +106,9 @@ public class Traveler {
                 System.out.println(e.getMessage());
             }
         }
-
         while (food < 0 || food > supplyBalances.get("cashBalance")) {
             System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));
-            System.out.println("\nHow much do you want to spend on your oxen team? Enter between 0- " +
+            System.out.println("\nHow much do you want to spend on your food? Enter between 0- " +
                     supplyBalances.get("cashBalance"));
 
             try {
@@ -125,6 +126,7 @@ public class Traveler {
 
             supplyBalances.put("food", food);
         }
+
 
         while (ammunition < 0 || ammunition > supplyBalances.get("cashBalance")) {
             System.out.println("\nCurrent cash balance: " + supplyBalances.get("cashBalance"));

@@ -76,6 +76,11 @@ public class Main {
         sc.nextLine();
     }
 
+    public static void exitGame() {
+        System.out.println("Thanks for playing!");
+        System.exit(0);
+    }
+
     public static void buyInitialSupplies(Scanner sc) {
         Map<String, Integer> newSupplyBalances = new HashMap<>();
         newSupplyBalances.put("cashBalance", 700);
@@ -177,16 +182,18 @@ public class Main {
             System.out.println("You'd better do some hunting or buy food and soon!!!");
         }
 
-        System.out.println("\nDo you want to (1) stop at the next fort, (2) hunt, or (3) continue traveling?");
 
         while (choice != 3) {
-            if (hasVisitedFort && hasHunted) {
-                while (choice < 1 || choice > 3) {
+            if (!hasVisitedFort && !hasHunted) {
+                System.out.println("\nDo you want to (1) stop at the next fort, (2) hunt, (3) continue traveling, " +
+                        "or (4) exit game?");
+                while (choice < 1 || choice > 4) {
                     try {
                         String input = sc.nextLine();
                         choice = Integer.parseInt(input);
+                        if (choice < 1 || choice > 4) throw new IllegalArgumentException();
                     } catch (Exception e) {
-                        System.out.println("Please enter a number between 1 and 3");
+                        System.out.println(e.getMessage());
                     }
                 }
 
@@ -198,6 +205,60 @@ public class Main {
                     case 2 -> {
                         hasHunted = true;
                         traveler.hunt();
+                    }
+                    case 4 -> {
+                        exitGame();
+                    }
+                }
+            } else if (!hasVisitedFort) {
+                System.out.println("\nDo you want to (1) stop at the next fort, (2) exit game, " +
+                        "or (3) continue traveling?");
+                String input = sc.nextLine();
+                choice = Integer.parseInt(input);
+                while (choice < 1 || choice > 3) {
+                    try {
+                        input = sc.nextLine();
+                        choice = Integer.parseInt(input);
+                        if (choice < 1 || choice > 3) {
+                            throw new IllegalArgumentException("Please enter a number between 1 and 2");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Please enter a number between 1 and 2");
+                    }
+                }
+
+                switch (choice) {
+                    case 1 -> {
+                        hasVisitedFort = true;
+                        traveler.buyFortSupplies();
+                    }
+                    case 3 -> {
+                        exitGame();
+                    }
+                }
+            } else if (!hasHunted) {
+                System.out.println("\nDo you want to (1) hunt, (2) exit game, or (3) continue traveling?");
+                String input = sc.nextLine();
+                choice = Integer.parseInt(input);
+                while (choice < 1 || choice > 3) {
+                    try {
+                        input = sc.nextLine();
+                        choice = Integer.parseInt(input);
+                        if (choice < 1 || choice > 3) {
+                            throw new IllegalArgumentException("Please enter a number between 1 and 3");
+                        }
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+
+                switch (choice) {
+                    case 1 -> {
+                        hasHunted = true;
+                        traveler.hunt();
+                    }
+                    case 3 -> {
+                        exitGame();
                     }
                 }
             }
