@@ -9,6 +9,7 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
+        Random rng = new Random();
         Traveler traveler = new Traveler();
         String[] dateArray = new String[] { "April 12th", "April 26th", "May 10th", "May 24th", "June 7th",
                 "June 21st", "July 5th", "July 19th", "August 2nd", "August 16th", "August 31st", "September 13", "September 27th",
@@ -27,7 +28,7 @@ public class Main {
 
         traveler.buyInitialSupplies();
         System.out.println("After all your purchases, you now have " +
-                traveler.getSupplyBalances().get("cashBalance") +  " dollars left");
+                traveler.getCashBalance() +  " dollars left");
         System.out.println("\nJourney begins: Monday, March 29, 1847");
 
         pressEnterToContinue();
@@ -48,19 +49,19 @@ public class Main {
                 }
             }
 
-            if (traveler.getSupplyBalances().get("food") < 13) {
+            if (traveler.getFood() < 13) {
                 System.out.println("You'd better do some hunting or buy food and soon!!!");
             }
 
-            if (traveler.getBooleanFlags().get("isSick")) traveler.visitDoctor("illness");
-            if (traveler.getBooleanFlags().get("isInjured")) traveler.visitDoctor("injuries");
+            if (traveler.isSick()) traveler.visitDoctor("illness");
+            if (traveler.isInjured()) traveler.visitDoctor("injuries");
 
             System.out.println("\nTotal mileage is " + traveler.getMilesTraveled());
             System.out.println("Your current supplies:");
-            System.out.println("food - " + traveler.getSupplyBalances().get("food"));
-            System.out.println("ammunition - " + traveler.getSupplyBalances().get("ammunition"));
-            System.out.println("clothing - " + traveler.getSupplyBalances().get("clothing"));
-            System.out.println("misc supplies - " + traveler.getSupplyBalances().get("misc"));
+            System.out.println("food - " + traveler.getFood());
+            System.out.println("ammunition - " + traveler.getAmmunition());
+            System.out.println("clothing - " + traveler.getClothing());
+            System.out.println("misc supplies - " + traveler.getMisc());
 
             while (choice != 3) {
                 if (!hasVisitedFort && !hasHunted) {
@@ -144,7 +145,14 @@ public class Main {
             }
 
             traveler.eat();
+            traveler.dailyTravel();
+            traveler.meetRiders();
             traveler.setTotalTurns(traveler.getTotalTurns() + 1);
+            if (traveler.getOxen() < 0) traveler.setOxen(0);
+            if (traveler.getFood() < 0) traveler.setFood(0);
+            if (traveler.getAmmunition() < 0) traveler.setAmmunition(0);
+            if (traveler.getClothing() < 0) traveler.setClothing(0);
+            if (traveler.getMisc() < 0) traveler.setMisc(0);
         }
     }
 
@@ -176,7 +184,7 @@ public class Main {
                 cash to spend at forts along the way when you run low. However, items cost more at the forts. You \s
                 can also go hunting along the way to get more food.""");
         System.out.println("""
-                Whenever you have to use your trusy rifle along the way, yo uwill be told to type in \s
+                Whenever you have to use your trusty rifle along the way, you will be told to type in \s
                 a word (one that sounds like a gun shot). The faster you type in that word and hit the 'enter' \s
                 key, the better luck you'll have with your gun.""");
         System.out.println("\nAt each turn, all items are shown in dollar amounts except bullets. When asked to enter \n" +
@@ -195,45 +203,6 @@ public class Main {
     public static void exitGame() {
         System.out.println("Thanks for playing!");
         System.exit(0);
-    }
-
-    // todo implement this
-    public static int dailyTravel(int milesToGo, Map<String, Integer> newSupplyBalances) {
-        Random random = new Random();
-        int oxen = newSupplyBalances.get("oxen");
-        int newMilesToGo = milesToGo;
-
-        int milesTraveled = 200 + (oxen - 220)/5 + random.nextInt(10);
-
-        return newMilesToGo - milesTraveled;
-    }
-
-    public static Map<String, Integer> eat(Map<String, Integer> supplyBalances, Scanner sc) {
-        Map<String, Integer> newSupplyBalances = new HashMap<>(supplyBalances);
-        int food = newSupplyBalances.get("food");
-        int choice = 0;
-
-        System.out.println("You have " + food + " food left.");
-        System.out.println("Do you want to eat (1) poorly, (2) moderately, or (3) well?");
-
-        while (choice < 1 || choice > 3) {
-            try {
-                String newInput = sc.nextLine();
-                choice = Integer.parseInt(newInput);
-            } catch (Exception e) {
-                System.out.println("Please enter a number between 1 and 3");
-                eat(supplyBalances, sc);
-            }
-        }
-
-        if (8 + 5 * choice > food) {
-            System.out.println("You can't eat that well");
-            eat(supplyBalances, sc);
-        }
-
-        newSupplyBalances.put("food", food - 8 - 5 * choice);
-
-        return newSupplyBalances;
     }
 
 }
