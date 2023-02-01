@@ -137,7 +137,7 @@ public class Main {
                             hasHunted = true;
                             traveler.hunt();
                         }
-                        case 3 -> {
+                        case 2 -> {
                             exitGame();
                         }
                     }

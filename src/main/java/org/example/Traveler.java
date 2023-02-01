@@ -95,6 +95,22 @@ public class Traveler {
         this.clearedSouthPass = clearedSouthPass;
     }
 
+    public boolean isInsuffClothing() {
+        return insuffClothing;
+    }
+
+    public boolean isSouthPassSettingMileage() {
+        return southPassSettingMileage;
+    }
+
+    public void setSouthPassSettingMileage(boolean southPassSettingMileage) {
+        this.southPassSettingMileage = southPassSettingMileage;
+    }
+
+    public boolean ridersAreHostile() {
+        return ridersAreHostile;
+    }
+
     public boolean hasClearedBlueMountains() {
         return clearedBlueMountains;
     }
@@ -125,10 +141,6 @@ public class Traveler {
 
     public void setInBlizzard(boolean inBlizzard) {
         this.inBlizzard = inBlizzard;
-    }
-
-    public boolean ridersAreHostile() {
-        return ridersAreHostile;
     }
 
     public void setRidersAreHostile(boolean ridersAreHostile) {
@@ -193,7 +205,7 @@ public class Traveler {
     }
 
     public void buyInitialSupplies() {
-        int cash = cashBalance;
+        int cash = 700;
         int oxen = -1;
         int food = -1;
         int ammunition = -1;
@@ -746,6 +758,8 @@ public class Traveler {
                     }
                     default -> throw new IllegalArgumentException();
                 };
+
+                    eventCounter = 16;
             }
         }
 
