@@ -426,6 +426,7 @@ public class Traveler {
     }
 
     public void eat() {
+        System.out.println("inside eat()");
         int choice = 0;
         int food = this.food;
 
@@ -472,9 +473,10 @@ public class Traveler {
     }
 
     public void meetRiders() {
+        System.out.println("inside meetRiders()");
         double hostileRng = Math.random();
         int tacticsChoice = 0;
-        String doOrDoNot = Math.random() < 0.8 ? "They do" : "They don't";
+        String doOrDoNot = hostileRng < 0.8 ? "They do" : "They don't";
         double milesConverted = Math.pow(((double) milesTraveled/100-4), 2);
 
         if (rng.nextInt(10) > (milesConverted+72)/(milesConverted+12)-1) {
@@ -591,6 +593,7 @@ public class Traveler {
     }
 
     public void selectEvent() {
+        System.out.println("inside selectEvent()");
         int[] eventArray = new int[] {6, 11, 13, 15, 17, 22, 32, 35, 37, 42, 44, 54, 64, 69, 95};
         int eventCounter = 0;
         int index = 0;
@@ -727,7 +730,7 @@ public class Traveler {
                             doOrDoNot = "don't have enough";
                             insuffClothing = true;
                         }
-                        System.out.println("Cold weather---BRRRRRRR!---you " + doOrDoNot + "clothing to keep you warm");
+                        System.out.println("Cold weather---BRRRRRRR!---you " + doOrDoNot + " clothing to keep you warm");
                         if (insuffClothing) illness();
                         checkMountains();
                     }
@@ -740,14 +743,78 @@ public class Traveler {
                         food += 14;
                         checkMountains();
                     }
-                }
+                    default -> throw new IllegalArgumentException();
+                };
             }
         }
 
     }
 
     public void checkMountains() {
+        if (milesTraveled <= 950) {   // line 4710
+            return;
+        } else {
+            double milesConverted = Math.pow(((double) milesTraveled/100-4), 2);
+            if (rng.nextInt(10) <= 9-(milesConverted+72) / (milesConverted+12)) {   // line 4720
+                System.out.println("Rugged mountains");   // line 4730
+                if (Math.random() > 0.1) {   // line 4740
+                    if (Math.random() > 0.11) {   // line 4780
+                        System.out.println("The going gets slow");   // line 4840
+                        milesTraveled -= 45 + Math.random() / 0.02;   // line 4850
+                        line4860();
+                    } else {
+                        System.out.println("Wagon damaged!-lost time and supplies");   // line 4790
+                        misc -= 5;   // line 4800
+                        ammunition -= 200;   // line 4810
+                        milesTraveled -= 20 + rng.nextInt(30);   // line 4820
+                    }
+                } else {
+                    System.out.println("You got lost--lost valuable time trying to find trail!");   // line 4750
+                    milesTraveled -= 60;   // line 4760
+                    line4860();
+                }
+            } else {
+                line4860();
+            }
+        }
+    }
 
+    public void line4860() {
+        if (clearedSouthPass) {   // line 4860
+            if (milesTraveled < 1700) {   // line 4900
+                return;
+            } else {
+                if (clearedBlueMountains) {   // line 4910
+                    return;
+                } else {
+                    clearedBlueMountains = true;   // line 4920
+                    if (Math.random() < 0.7) {   // line 4930
+                        blizzardInMountains();
+                    } else {
+                        return;
+                    }
+                }
+            }
+        } else {
+            clearedSouthPass = true;   // line 4870
+            if (Math.random() < 0.8) {   // line 4880
+                blizzardInMountains();
+            } else {
+                return;
+            }
+        }
+    }
+
+    public void blizzardInMountains() {
+        System.out.println("Blizzard in mountain pass--time and supplies lost");   // line 4970
+        inBlizzard = true;   // line 4980
+        food -= 25;   // line 4990
+        misc -= 10;   // line 5000
+        ammunition -= 300;   // line 5010
+        milesTraveled -= 30 + rng.nextInt(40);   // line 5020
+        if (clothing < 18 + rng.nextInt(2)) {   // line 5030
+            illness();
+        }
     }
 
     public void youDied() {

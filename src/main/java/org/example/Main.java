@@ -142,17 +142,17 @@ public class Main {
                         }
                     }
                 }
+                traveler.eat();
+                traveler.dailyTravel();
+                traveler.meetRiders();
+                traveler.setTotalTurns(traveler.getTotalTurns() + 1);
+                if (traveler.getOxen() < 0) traveler.setOxen(0);
+                if (traveler.getFood() < 0) traveler.setFood(0);
+                if (traveler.getAmmunition() < 0) traveler.setAmmunition(0);
+                if (traveler.getClothing() < 0) traveler.setClothing(0);
+                if (traveler.getMisc() < 0) traveler.setMisc(0);
             }
 
-            traveler.eat();
-            traveler.dailyTravel();
-            traveler.meetRiders();
-            traveler.setTotalTurns(traveler.getTotalTurns() + 1);
-            if (traveler.getOxen() < 0) traveler.setOxen(0);
-            if (traveler.getFood() < 0) traveler.setFood(0);
-            if (traveler.getAmmunition() < 0) traveler.setAmmunition(0);
-            if (traveler.getClothing() < 0) traveler.setClothing(0);
-            if (traveler.getMisc() < 0) traveler.setMisc(0);
         }
     }
 
