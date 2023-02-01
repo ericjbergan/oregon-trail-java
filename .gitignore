@@ -34,6 +34,7 @@ build/
 .gradletasknamecache
 gradle-app.setting
 !gradle-wrapper.jar
+.gradle/7.4/executionHistory/executionHistory.bin
 
 ##############################
 ## IntelliJ
