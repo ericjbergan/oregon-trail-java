@@ -15,6 +15,7 @@ public class Traveler {
     private int misc = -1;
     boolean insuffClothing = false;
     boolean clearedSouthPass = false;
+    boolean southPassSettingMileage = false;
     boolean clearedBlueMountains = false;
     boolean isInjured = false;
     boolean isSick = false;
@@ -822,7 +823,22 @@ public class Traveler {
     }
 
     public void illness() {
-
+        if (rng.nextInt(100) < 10+35*(eatingChoice-1)) {   // line 6300
+            System.out.println("Mild illness---medicine used");   // line 6370
+            milesTraveled -= 5;   // line 6380
+            misc -= 2;   // line 6390
+            if (misc < 0) {   // line 6440
+                youDied();
+            } else {
+                if (inBlizzard) {   // line 6450
+                    if (milesTraveled > 950) {   // line 4940
+                        return;
+                    }
+                } else {
+                    southPassSettingMileage = true;   // line 4950
+                }
+            }
+        }
     }
 
 }
