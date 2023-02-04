@@ -1,10 +1,6 @@
 package org.example;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Traveler {
     private int cashBalance = 700;
@@ -26,6 +22,7 @@ public class Traveler {
     private int milesTraveled = 0;
     private int travelHandicap = 0;
     private int eatingChoice = 0;
+    private int milesPreviousTurn = 0;
     private Scanner sc = new Scanner(System.in);
     private Random rng = new Random();
 
@@ -390,7 +387,6 @@ public class Traveler {
     }
 
     public void hunt() {
-
         int newFood = 0;
         int usedAmmo;
 
@@ -416,6 +412,9 @@ public class Traveler {
         } else {
             System.out.println("You missed---and your dinner got away.....");
             usedAmmo = 10 + 3 * elapsedSeconds;
+            if (food < 13) {
+                youDied("You ran out of food and starved to death");
+            }
         }
 
         this.food += newFood;
@@ -424,6 +423,8 @@ public class Traveler {
     }
 
     public Map<String, Integer> fireWeapon() {
+        System.out.println("Get ready to fire!");
+        Main.pressEnterToContinue();
         int index = rng.nextInt(4);
         String[] typeChoiceArray = new String[] {"bang", "blam", "pow", "wham"};
         String wordToType = typeChoiceArray[index];
@@ -439,7 +440,6 @@ public class Traveler {
     }
 
     public void eat() {
-        System.out.println("inside eat()");
         int choice = 0;
         int food = this.food;
 
@@ -477,16 +477,33 @@ public class Traveler {
         System.out.println("The doctor bill will be $20.");
 
         if (this.cashBalance < 0) {
-            System.out.println("You can't afford a doctor. You died from your " + reason + ".");
+            youDied("You can't afford a doctor. You died from your " + reason + ".");
         }
     }
 
     public void dailyTravel() {
-        milesTraveled += 200 + (this.oxen - 220)/5 + rng.nextInt(10);
+        milesPreviousTurn = milesTraveled;
+        int travelThisTurn = 200 + (this.oxen - 220)/5 + rng.nextInt(10);
+        milesTraveled += travelThisTurn;
+        if (milesTraveled >= 2040) finalTurn(travelThisTurn);
+    }
+
+    public void finalTurn(int travelThisTurn) {
+        int fractionOfTurn = ((2040-milesPreviousTurn)/milesTraveled);
+        System.out.println("fractionOfTurn: " + fractionOfTurn);
+        System.out.println("food before: " + food);
+        food -= (1-fractionOfTurn)*(8*5*eatingChoice);
+        System.out.println("food after: " + food);
+        System.out.println("You finally arrived at Oregon City after 2040 long miles---Hooray!!!!!" +
+                " A real pioneer.");
+        int dayOfTheYear = 88 + fractionOfTurn * 14;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_YEAR, dayOfTheYear);
+        System.out.println("Day of year " + dayOfTheYear + " = " + calendar.getTime());
+        Main.exitGame();
     }
 
     public void meetRiders() {
-        System.out.println("inside meetRiders()");
         double hostileRng = Math.random();
         int tacticsChoice = 0;
         String doOrDoNot = hostileRng < 0.8 ? "They do" : "They don't";
@@ -498,10 +515,10 @@ public class Traveler {
 
         System.out.println("\nRiders ahead. " + doOrDoNot + " look hostile");
         System.out.println("Tactics: " +
-                "(1) run - gain miles but punishes the oxen with permanent penalty " +
-                "(2) attack - but they could be friendly " +
-                "(3) continue - but they could be unfriendly " +
-                "(4) circle wagons - ");
+                "\n(1) run - gain miles but punishes the oxen with permanent penalty " +
+                "\n(2) attack - but they could be friendly " +
+                "\n(3) continue - but they could be unfriendly " +
+                "\n(4) circle wagons - good defense, but takes time and maybe not necessary");
         if (Math.random() <= 0.2) ridersAreHostile = !ridersAreHostile;
 
         while (tacticsChoice < 1 || tacticsChoice > 4) {
@@ -509,7 +526,7 @@ public class Traveler {
                 String input = sc.nextLine();
                 tacticsChoice = Integer.parseInt(input);
                 if (tacticsChoice < 1 || tacticsChoice > 4) throw new IllegalArgumentException("Please enter a" +
-                        "number between 1 and 4");
+                        "number between 1 and 4.");
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -522,14 +539,13 @@ public class Traveler {
                     misc -= 15;
                     ammunition -= 150;
                     oxen -= 40;
-                    System.out.println("Riders were hostile--check for losses");
+                    System.out.println("Riders were hostile--check for losses.");
                     if (ammunition >= 0) selectEvent();
-                    System.out.println("You ran out of bullets and got massacred by the riders");
-                    youDied();
+                    youDied("You ran out of bullets and got massacred by the riders.");
                 } else {
                     milesTraveled += 15;
                     oxen -= 10;
-                    System.out.println("Riders were friendly, but check for possible losses");
+                    System.out.println("Riders were friendly, but check for possible losses.");
                     checkForLosses();
                 }
             }
@@ -541,23 +557,25 @@ public class Traveler {
                 } else {
                     milesTraveled -= 5;
                     ammunition -= 100;
-                    System.out.println("Riders were friendly, but check for possible losses");
+                    System.out.println("Riders were friendly, but check for possible losses.");
                     checkForLosses();
                 }
             }
             case 3 -> {   // continue
                 if (ridersAreHostile) {
                     if (Math.random() > 0.8) {
-                        System.out.println("They did not attack, but check for possible losses");
+                        System.out.println("They did not attack, but check for possible losses.");
                         checkForLosses();
                     } else {
                         ammunition -= 150;
                         misc -= 15;
-                        System.out.println("Check for possible losses");
+                        System.out.println("They did attack.");
+                        fireWeapon();
+                        System.out.println("Check for possible losses.");
                         checkForLosses();
                     }
                 } else {
-                    System.out.println("Riders were friendly, but check for possible losses");
+                    System.out.println("Riders were friendly, but check for possible losses.");
                     checkForLosses();
                 }
             }
@@ -569,7 +587,7 @@ public class Traveler {
                     fightRiders(elapsedSeconds);
                 } else {
                     milesTraveled -= 20;
-                    System.out.println("Riders were friendly, but check for possible losses");
+                    System.out.println("Riders were friendly, but check for possible losses.");
                     checkForLosses();
                 }
             }
@@ -578,22 +596,21 @@ public class Traveler {
 
     public void fightRiders(int elapsedSeconds) {
         if (this.ammunition < 0) {
-            System.out.println("You ran out of bullets and got massacred by the riders");
-            youDied();
+            youDied("You ran out of bullets and got massacred by the riders.");
         } else {
             if (elapsedSeconds <= 1) {
                 System.out.println("Nice shooting---you drove them off");
-                System.out.println("Riders were hostile. Check for losses");
+                System.out.println("Riders were hostile. Check for losses.");
                 checkForLosses();
             } else if (elapsedSeconds <= 4) {
                 System.out.println("Kinda slow with your colt .45");
-                System.out.println("Riders were hostile. Check for losses");
+                System.out.println("Riders were hostile. Check for losses.");
                 checkForLosses();
             } else {
                 System.out.println("Lousy shot---you got knifed");
                 isInjured = true;
-                System.out.println("You'll have to see ol' doc Blanchard");
-                System.out.println("Riders were hostile. Check for losses");
+                System.out.println("You'll have to see ol' doc Blanchard.");
+                System.out.println("Riders were hostile. Check for losses.");
                 checkForLosses();
             }
         }
@@ -606,8 +623,7 @@ public class Traveler {
     }
 
     public void selectEvent() {
-        System.out.println("inside selectEvent()");
-        int[] eventArray = new int[] {6, 11, 13, 15, 17, 22, 32, 35, 37, 42, 44, 54, 64, 69, 95};
+        int[] eventArray = new int[] {6, 11, 13, 15, 17, 22, 32, 35, 37, 42, 44, 54, 64, 69, 80, 95};
         int eventCounter = 0;
         int index = 0;
         int eventRnd = rng.nextInt(100);
@@ -620,18 +636,21 @@ public class Traveler {
             } else {
                 switch (eventCounter) {
                     case 1 -> {
+                        System.out.println("Event 1");
                         System.out.println("Wagon breaks down--lose time and supplies fixing it");
                         milesTraveled -= 15 + rng.nextInt(5);
                         misc -= 8;
                         checkMountains();
                     }
                     case 2 -> {
+                        System.out.println("Event 2");
                         System.out.println("Ox injures leg--slows you down rest of trip");
                         milesTraveled -= 25;
                         oxen -= 20;
                         checkMountains();
                     }
                     case 3 -> {
+                        System.out.println("Event 3");
                         System.out.println("Bad luck--your daughter broke her arm");
                         System.out.println("You had to stop and use supplies to make a sling");
                         milesTraveled -= 5 + rng.nextInt(4);
@@ -639,21 +658,25 @@ public class Traveler {
                         checkMountains();
                     }
                     case 4 -> {
+                        System.out.println("Event 4");
                         System.out.println("Ox wanders off-spend time looking for it");
                         milesTraveled -= 17;
                         checkMountains();
                     }
                     case 5 -> {
+                        System.out.println("Event 5");
                         System.out.println("Your son gets lost--spend half the day looking for him");
                         milesTraveled -= 20;
                         checkMountains();
                     }
                     case 6 -> {
+                        System.out.println("Event 6");
                         System.out.println("Unsafe water--lose time looking for clean spring");
                         milesTraveled -= rng.nextInt(10) + 2;
                         checkMountains();
                     }
                     case 7 -> {
+                        System.out.println("Event 7");
                         System.out.println("Heavy rains---time and supplies lost");
                         food -= 10;
                         ammunition -= 500;
@@ -662,6 +685,7 @@ public class Traveler {
                         checkMountains();
                     }
                     case 8 -> {
+                        System.out.println("Event 8");
                         int elapsedSeconds = fireWeapon().entrySet().iterator().next().getValue();
                         ammunition -= elapsedSeconds * 20;
                         if (ammunition >= 0) {
@@ -683,6 +707,7 @@ public class Traveler {
                         checkMountains();
                     }
                     case 9 -> {
+                        System.out.println("Event 9");
                         System.out.println("There was a fire in your wagon--food and supplies damaged");
                         food -= 40;
                         ammunition -= 400;
@@ -691,21 +716,23 @@ public class Traveler {
                         checkMountains();
                     }
                     case 10 -> {
+                        System.out.println("Event 10");
                         System.out.println("Lose your way in heavy fog---time is lost");
                         milesTraveled -= 10 + rng.nextInt(5);
                         checkMountains();
                     }
                     case 11 -> {
+                        System.out.println("Event 11");
                         System.out.println("You killed a venomous snake after it bit you");
                         ammunition -= 10;
                         misc -= 5;
                         if (misc <= 0) {
-                            System.out.println("You die of snakebite since you have no medicine");
-                            youDied();
+                            youDied("You die of snakebite since you have no medicine");
                         }
                         checkMountains();
                     }
                     case 12 -> {
+                        System.out.println("Event 12");
                         System.out.println("Wagon gets swamped fording river---lose food and clothes");
                         food -= 30;
                         clothing -= 20;
@@ -713,6 +740,7 @@ public class Traveler {
                         checkMountains();
                     }
                     case 13 -> {
+                        System.out.println("Event 13");
                         System.out.println("Wild animals attack!");
                         int elapsedSeconds = fireWeapon().entrySet().iterator().next().getValue();
                         if (ammunition > 39) {
@@ -728,14 +756,13 @@ public class Traveler {
                                 food -= elapsedSeconds * 8;
                             }
                         } else {
-                            System.out.println("You were too low on bullets--the wolves overpowered you");
                             isInjured = true;
-                            System.out.println("You died from your injuries");
-                            youDied();
+                            youDied("You were too low on bullets--the wolves overpowered you and you died from your injuries");
                         }
                         checkMountains();
                     }
                     case 14 -> {
+                        System.out.println("Event 14");
                         String doOrDoNot = "";
                         if (clothing >= 22 + rng.nextInt(4)) {
                             doOrDoNot = "have enough";
@@ -748,10 +775,12 @@ public class Traveler {
                         checkMountains();
                     }
                     case 15 -> {
+                        System.out.println("Event 15");
                         illness();
                         checkMountains();
                     }
                     case 16 -> {
+                        System.out.println("Event 16");
                         System.out.println("Helpful Indians show you where to find more food");
                         food += 14;
                         checkMountains();
@@ -760,9 +789,18 @@ public class Traveler {
                 };
 
                     eventCounter = 16;
+                    printSupplies();
             }
         }
 
+    }
+
+    public void printSupplies() {
+        System.out.println("Current supplies:");
+        System.out.println("Food - " + food);
+        System.out.println("Ammunition - " + ammunition);
+        System.out.println("Clothing - " + clothing);
+        System.out.println("Miscellaneous - " + misc);
     }
 
     public void checkMountains() {
@@ -820,6 +858,14 @@ public class Traveler {
         }
     }
 
+    public void line6440() {
+        if (misc < 0) {   // line 6440
+            youDied("You ran out of medical supplies and died from pneumonia.");
+        } else if (inBlizzard || milesTraveled <=950) {   // line 6450
+            southPassSettingMileage = true;   // line 4950
+        }
+    }
+
     public void blizzardInMountains() {
         System.out.println("Blizzard in mountain pass--time and supplies lost");   // line 4970
         inBlizzard = true;   // line 4980
@@ -832,8 +878,23 @@ public class Traveler {
         }
     }
 
-    public void youDied() {
-
+    public void youDied(String causeOfDeath) {
+        System.out.println(causeOfDeath);
+        Main.pressEnterToContinue();
+        System.out.println("Due to your unfortunate situation, there a few formalities we must go through.");
+        System.out.println("Would you like a minister?");
+        String input1 = sc.nextLine();
+        System.out.println("Would you like a fancy funeral?");
+        String input2 = sc.nextLine();
+        System.out.println("Would you like us to inform your next of kin?");
+        String input3 = sc.nextLine();
+        if (!input3.equalsIgnoreCase("y")) {
+            System.out.println("But your Aunt Sadie in St. Louis is really worried about you.");
+        } else {
+            System.out.println("That will be $4.50 for th telegraph charge.");
+        }
+        System.out.println("We thank you for this information and we are sorry you didn't make it to the " +
+                "great territory of Oregon. Better luck next time. \n\nSincerely, \nThe Oregon Chamber of Commerce");
     }
 
     public void illness() {
@@ -841,17 +902,17 @@ public class Traveler {
             System.out.println("Mild illness---medicine used");   // line 6370
             milesTraveled -= 5;   // line 6380
             misc -= 2;   // line 6390
-            if (misc < 0) {   // line 6440
-                youDied();
-            } else {
-                if (inBlizzard) {   // line 6450
-                    if (milesTraveled > 950) {   // line 4940
-                        return;
-                    }
-                } else {
-                    southPassSettingMileage = true;   // line 4950
-                }
-            }
+            line6440();
+        } else if (rng.nextInt(100) < 100-Math.pow((double) 40/4, eatingChoice-1)) {   // line 6310
+            System.out.println("Bad illness---medicine used");   // line 6410
+            milesTraveled -= 5;   // line 6420
+            misc -= 5;   // line 6430
+            line6440();
+        } else {
+            System.out.println("Serious illness---you mush stop for medical attention");   // lines 6320-6330
+            misc -= 10;   // line 6340
+            isSick = true;   // line 6350
+            line6440();
         }
     }
 

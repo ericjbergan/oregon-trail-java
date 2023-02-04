@@ -44,8 +44,8 @@ public class Main {
                 try {
                     System.out.println("Today's date: Monday, " + dateArray[traveler.getTotalTurns()] + ", 1847");
                 } catch (NullPointerException e) {
-                    System.out.println("Happy Holidays! You took too long getting to your destination and died in the" +
-                            "first blizzard of winter.");
+                    traveler.youDied("Happy Holidays! You took too long getting to your destination and " +
+                            "died in the first blizzard of winter.");
                 }
             }
 
@@ -150,7 +150,7 @@ public class Main {
                 if (traveler.getFood() < 0) traveler.setFood(0);
                 if (traveler.getAmmunition() < 0) traveler.setAmmunition(0);
                 if (traveler.getClothing() < 0) traveler.setClothing(0);
-                if (traveler.getMisc() < 0) traveler.setMisc(0);
+                if (traveler.getMisc() < 0) traveler.setMisc(0);traveler.finalTurn(200 + (traveler.getOxen() - 220)/5 + rng.nextInt(10));
             }
 
         }
