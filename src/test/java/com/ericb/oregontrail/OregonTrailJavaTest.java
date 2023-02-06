@@ -1,15 +1,24 @@
 package com.ericb.oregontrail;
 
-import org.example.Traveler;
+import ericjbergan.oregontrail.Game;
+import ericjbergan.oregontrail.Traveler;
 import org.junit.jupiter.api.Test;
+
+import java.io.PrintStream;
+import java.util.Random;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OregonTrailJavaTest {
+    Random rng = new Random();
+    Scanner sc = new Scanner(System.in);
+    PrintStream ps = System.out;
+    Game game = new Game(rng, sc, ps);
+    Traveler traveler = Game.getTraveler();
+
     @Test
     public void createTravelerSuccess() {
-        Traveler traveler = new Traveler();
-
         assertEquals(traveler.getCashBalance(), 700);
         assertEquals(traveler.getOxen(), -1);
         assertEquals(traveler.getFood(), -1);
@@ -23,7 +32,7 @@ public class OregonTrailJavaTest {
         assertFalse(traveler.hasClearedBlueMountains());
         assertFalse(traveler.isInjured());
         assertFalse(traveler.isSick());
-        assertFalse(traveler.isInBlizzard());
+        assertFalse(traveler.inBlizzard());
         assertFalse(traveler.ridersAreHostile());
     }
 
