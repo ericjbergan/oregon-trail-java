@@ -1,4 +1,4 @@
-package ericjbergan.oregontrail;
+package ericb.oregontrail;
 
 import java.io.PrintStream;
 import java.util.*;

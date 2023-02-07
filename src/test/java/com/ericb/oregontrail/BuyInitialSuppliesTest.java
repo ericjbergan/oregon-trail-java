@@ -1,7 +1,7 @@
 package com.ericb.oregontrail;
 
-import ericjbergan.oregontrail.Game;
-import ericjbergan.oregontrail.Traveler;
+import ericb.oregontrail.Game;
+import ericb.oregontrail.Traveler;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;

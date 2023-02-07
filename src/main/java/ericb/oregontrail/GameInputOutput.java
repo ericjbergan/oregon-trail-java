@@ -1,4 +1,4 @@
-package ericjbergan.oregontrail;
+package ericb.oregontrail;
 
 public class GameInputOutput {
 }

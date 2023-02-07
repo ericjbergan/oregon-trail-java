@@ -1,6 +1,5 @@
-package ericjbergan.oregontrail;
+package ericb.oregontrail;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Random;
 import java.util.Scanner;
