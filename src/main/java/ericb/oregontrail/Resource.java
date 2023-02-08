@@ -1,7 +1,7 @@
 package ericb.oregontrail;
 
 public class Resource {
-    private String name;
+    private final String name;
     private int amount;
 
     public Resource(String name, int amountChange) {
@@ -13,15 +13,15 @@ public class Resource {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getAmount() {
         return amount;
     }
 
     public void setAmount(int amount) {
+        if (name.equals("ammunition")) {
+            amount = amount * 50;
+        }
+
         this.amount += amount;
     }
 }

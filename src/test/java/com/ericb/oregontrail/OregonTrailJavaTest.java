@@ -14,8 +14,7 @@ public class OregonTrailJavaTest {
     Random rng = new Random();
     Scanner sc = new Scanner(System.in);
     PrintStream ps = System.out;
-    Game game = new Game(rng, sc, ps);
-    Traveler traveler = Game.getTraveler();
+    Game game = new Game();
 
     @Test
     public void createTravelerSuccess() {

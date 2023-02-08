@@ -13,7 +13,7 @@ public class BuyInitialSuppliesTest {
     Scanner sc = new Scanner(System.in);
     PrintStream ps = System.out;
     Traveler traveler = new Traveler(sc);
-    Game game = new Game(rng, sc, ps);
+    Game game = new Game();
 
     @Test
     public void buysSuppliesSuccessfully() {

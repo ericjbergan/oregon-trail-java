@@ -9,18 +9,18 @@ public class Traveler {
     Resource ammunition = new Resource("ammunition", 0);
     Resource clothing = new Resource("clothing", 0);
     Resource misc = new Resource("misc", 0);
-    boolean insuffClothing = false;
-    boolean clearedSouthPass = false;
-    boolean southPassSettingMileage = false;
-    boolean clearedBlueMountains = false;
-    boolean injured = false;
-    boolean sick = false;
-    boolean blizzard = false;
-    boolean ridersAreHostile = false;
+    private boolean insuffClothing = false;
+    private boolean clearedSouthPass = false;
+    private boolean southPassSettingMileage = false;
+    private boolean clearedBlueMountains = false;
+    private boolean injured = false;
+    private boolean sick = false;
+    private boolean blizzard = false;
+    private boolean ridersAreHostile = false;
+    private boolean visitingFort = false;
     private int marksmanship;
     private int totalTurns = 0;
     private int milesTraveled = 0;
-    private int travelHandicap = 0;
     private int eatingChoice = 0;
     private int milesPreviousTurn = 0;
     private final Scanner sc;
@@ -49,20 +49,12 @@ public class Traveler {
         this.clearedSouthPass = clearedSouthPass;
     }
 
-    public boolean isInsuffClothing() {
-        return insuffClothing;
-    }
-
     public boolean isSouthPassSettingMileage() {
         return southPassSettingMileage;
     }
 
     public void setSouthPassSettingMileage(boolean southPassSettingMileage) {
         this.southPassSettingMileage = southPassSettingMileage;
-    }
-
-    public boolean ridersAreHostile() {
-        return ridersAreHostile;
     }
 
     public boolean hasClearedBlueMountains() {
@@ -78,7 +70,7 @@ public class Traveler {
     }
 
     public void setInjured(boolean injured) {
-        injured = injured;
+        this.injured = injured;
     }
 
     public boolean isSick() {
@@ -86,7 +78,7 @@ public class Traveler {
     }
 
     public void setSick(boolean sick) {
-        sick = sick;
+        this.sick = sick;
     }
 
     public boolean inBlizzard() {
@@ -97,8 +89,20 @@ public class Traveler {
         this.blizzard = inBlizzard;
     }
 
+    public boolean ridersAreHostile() {
+        return ridersAreHostile;
+    }
+
     public void setRidersAreHostile(boolean ridersAreHostile) {
         this.ridersAreHostile = ridersAreHostile;
+    }
+
+    public boolean isVisitingFort() {
+        return visitingFort;
+    }
+
+    public void setVisitingFort(boolean visitingFort) {
+        this.visitingFort = visitingFort;
     }
 
     public int getMarksmanship() {
@@ -136,24 +140,12 @@ public class Traveler {
         this.milesTraveled += milesTraveled;
     }
 
-    public void setMarksmanship(int marksmanship) {
-        this.marksmanship = marksmanship;
-    }
-
     public int getTotalTurns() {
         return totalTurns;
     }
 
     public void setTotalTurns(int daysTraveled) {
         this.totalTurns = daysTraveled;
-    }
-
-    public int getTravelHandicap() {
-        return travelHandicap;
-    }
-
-    public void setTravelHandicap(int travelHandicap) {
-        this.travelHandicap = travelHandicap;
     }
 
     public int getEatingChoice() {
