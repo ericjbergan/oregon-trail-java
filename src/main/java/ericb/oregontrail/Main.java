@@ -23,9 +23,9 @@ public class Main {
 
         traveler.setMarksmanship();
 
-        traveler.buyInitialSupplies();
+        game.buyInitialSupplies();
         System.out.println("After all your purchases, you now have " +
-                traveler.getCashBalance() + " dollars left");
+                traveler.cashBalance.getAmount() + " dollars left");
         System.out.println("\nJourney begins: Monday, March 29, 1847");
 
         Game.pressEnterToContinue();

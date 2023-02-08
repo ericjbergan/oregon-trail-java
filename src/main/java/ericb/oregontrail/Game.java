@@ -13,13 +13,13 @@ public class Game {
     private static Traveler traveler;
     private final Random rng;
     private final Scanner sc;
-    private final PrintStream ps;
+    private final PrintStream out;
 
     public Game(Random rng, Scanner sc, PrintStream ps) {
-        traveler = new Traveler(rng);
+        traveler = new Traveler(sc);
         this.sc = sc;
         this.rng = rng;
-        this.ps = ps;
+        this.out = ps;
     }
 
     public static Traveler getTraveler() {
@@ -27,71 +27,184 @@ public class Game {
     }
 
     public void printInstructions() {
-        System.out.println("""
+        out.println("""
                 This program simulates a trip over the Oregon Trail from Independence, Missouri to Oregon\s
                 City, Oregon in 1847. Your family of five will cover the 2040 mile Oregon Trail in 5-6 months ---\s
                 if you make it alive.""");
         pressEnterToContinue();
-        System.out.println("""
+        out.println("""
                 \nYou had saved $900 to spend for the trip, and you've just paid $200 for a wagon. You will
                 need to spend the rest of your money on the following items:""");
-        System.out.println("""
+        out.println("""
                 \nOxen - You can spend $200-$300 on your team. the more you spend, the faster you'll go because you
                 have better animals""");
-        System.out.println("""
+        out.println("""
                 \nFood - The more you have, the less chance there is of getting sick""");
-        System.out.println("""
+        out.println("""
                 \nAmmunition - $1 buys a belt of 50 bullets. You will need bullets for attacks by animals and
                 bandits, and for hunting food""");
-        System.out.println("""
+        out.println("""
                 \nClothing - This is especially important for the cold weather you will encounter when crossing
                 the mountains""");
-        System.out.println("""
+        out.println("""
                 \nMiscellaneous supplies - This includes medicine and other things you will need for sickness
                 and emergency repairs""");
 
         pressEnterToContinue();
 
-        ps.println("""
+        out.println("""
                 You can spend all your money before you start your trip - or you can save some of your\s
                 cash to spend at forts along the way when you run low. However, items cost more at the forts. You \s
                 can also go hunting along the way to get more food.""");
-        System.out.println("""
+        out.println("""
                 \nWhenever you have to use your trusty rifle along the way, you will be told to type in \s
                 a word (one that sounds like a gun shot). The faster you type in that word and hit the 'enter' \s
                 key, the better luck you'll have with your gun.""");
-        System.out.println("\nAt each turn, all items are shown in dollar amounts except bullets. When asked to enter \n" +
-                "money amounts, don't use a '$'");
+        out.println("""
+                \nAt each turn, all items are shown in dollar amounts except bullets. When asked to enter\s
+                money amounts, don't use a '$'""");
 
         pressEnterToContinue();
     }
 
-    public static void pressEnterToContinue() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Press enter to continue...");
-        sc.nextLine();
-        System.out.println("___________________________________________________________________________________________");
+    public void buyInitialSupplies() {
+        Resource[] resources = traveler.getResources();
+
+        for (Resource resource : resources) {
+            int min = 0;
+            int max = traveler.cashBalance.getAmount();
+            if (resource.getName().equals("oxen")) {
+                min = 200;
+                max = 300;
+            }
+
+            System.out.println("\nCurrent cash balance: " + max);
+            System.out.printf(
+                    "\nHow much do you want to spend on %s? Enter between %d-%d.%n", resource.getName(), min, max);
+            while (true) {
+                try {
+                    int cashSpent = sc.nextInt();
+                    if (cashSpent < min || cashSpent > max) {
+                        throw new IllegalArgumentException("Please enter a number between %d and %d".formatted(min, max));
+                    }
+
+                    resource.setAmount(cashSpent);
+                    traveler.cashBalance.setAmount(-cashSpent);
+
+                    break;
+                } catch (Exception e) {
+                    out.println(e.getMessage());
+                }
+            }
+        }
+
+
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("\nHow much do you want to spend on your oxen team? Enter between 200-300.");
+//
+//        cashSpent = nextBoundedInt(200, 300);
+//        resources.oxen.setAmount(cashSpent);
+//        cash -= cashSpent;
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("\nHow much do you want to spend on your food? Enter between 0-" + cash);
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.food.setAmount(cashSpent);
+//        cash -= cashSpent;
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("How much do you want to spend on ammunition? Enter between 0-" + cash
+//                + ". Remember, each dollar spent buys 50 bullets.");
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.ammunition.setAmount(cashSpent * 50);
+//        cash -= cashSpent;
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("How much do you want to spend on clothing? Enter between 0-" + cash);
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.clothing.setAmount(cashSpent);
+//        cash -= cashSpent;
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("How much do you want to spend on miscellaneous supplies? Enter between 0-" + cash);
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.misc.setAmount(cashSpent);
+//        cash -= cashSpent;
+//
+//        resources.cashBalance.setAmount(cash);
     }
 
-    public static void exitGame() {
-        System.out.println("Thanks for playing!");
-        System.exit(0);
+    public void buyFortSupplies() {
+//        int cash = traveler.cashBalance.getAmount();
+//        int cashSpent;
+//        Resource[] resources = traveler.getResources();
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("\nHow much do you want to spend on your food? Enter between 0-" + cash);
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.food.setAmount((int) Math.round(0.667 * cashSpent));
+//        cash -= cashSpent;
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("How much do you want to spend on ammunition? Enter between 0-" + cash
+//                + ". Remember, each dollar spent buys 50 bullets.");
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.ammunition.setAmount((int) Math.round(0.667 * cashSpent) * 50);
+//        cash -= cashSpent;
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("How much do you want to spend on clothing? Enter between 0-" + cash);
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.clothing.setAmount((int) Math.round(0.667 * cashSpent));
+//        cash -= cashSpent;
+//
+//        System.out.println("\nCurrent cash balance: " + cash);
+//        System.out.println("How much do you want to spend on miscellaneous supplies? Enter between 0-" + cash);
+//
+//        cashSpent = nextBoundedInt(0, cash);
+//        resources.misc.setAmount((int) Math.round(0.667 * cashSpent));
+//        cash -= cashSpent;
+//
+//        resources.cashBalance.setAmount(cash);
+//        if (traveler.getTotalTurns() > 0) traveler.setMilesTraveled(-45);
+    }
+
+    private int nextBoundedInt(int min, int max) {
+        while (true) {
+            try {
+                int value = sc.nextInt();
+                if (value < min || value > max) {
+                    throw new IllegalArgumentException("Please enter a number between %d and %d".formatted(min, max));
+                }
+
+                return value;
+            } catch (Exception e) {
+                out.println(e.getMessage());
+            }
+        }
     }
 
     public void illness() {
         if (rng.nextInt(100) < 10+35*(traveler.getEatingChoice()-1)) {   // line 6300
             System.out.println("Mild illness---medicine used");   // line 6370
             traveler.setMilesTraveled(-5);   // line 6380
-            traveler.setMisc(-2);   // line 6390
+            traveler.misc.setAmount(-2);   // line 6390
             checkMiscAndBlizzard();
         } else if (rng.nextInt(100) < 100-Math.pow((double) 40/4, traveler.getEatingChoice()-1)) {   // line 6310
             System.out.println("Bad illness---medicine used");   // line 6410
             traveler.setMilesTraveled(-5);   // line 6420
-            traveler.setMisc(-5);   // line 6430
+            traveler.misc.setAmount(-5);   // line 6430
             checkMiscAndBlizzard();
         } else {
             System.out.println("Serious illness---you mush stop for medical attention");   // lines 6320-6330
-            traveler.setMisc(-10);   // line 6340
+            traveler.misc.setAmount(-10);   // line 6340
             traveler.setSick(true);   // line 6350
             checkMiscAndBlizzard();
         }
@@ -112,7 +225,7 @@ public class Game {
                 }
             }
 
-            if (traveler.getFood() < 13) {
+            if (traveler.food.getAmount() < 13) {
                 System.out.println("You'd better do some hunting or buy food and soon!!!");
             }
 
@@ -121,10 +234,10 @@ public class Game {
 
             System.out.println("\nTotal mileage is " + traveler.getMilesTraveled());
             System.out.println("Your current supplies:");
-            System.out.println("food - " + traveler.getFood());
-            System.out.println("ammunition - " + traveler.getAmmunition());
-            System.out.println("clothing - " + traveler.getClothing());
-            System.out.println("misc supplies - " + traveler.getMisc());
+            System.out.println("food - " + traveler.food.getAmount());
+            System.out.println("ammunition - " + traveler.ammunition.getAmount());
+            System.out.println("clothing - " + traveler.clothing.getAmount());
+            System.out.println("misc supplies - " + traveler.misc.getAmount());
 
             while (choice != 3) {
                 if (!hasVisitedFort && !hasHunted) {
@@ -143,7 +256,7 @@ public class Game {
                     switch (choice) {
                         case 1 -> {
                             hasVisitedFort = true;
-                            traveler.buyFortSupplies();
+                            buyFortSupplies();
                         }
                         case 2 -> {
                             hasHunted = true;
@@ -173,7 +286,7 @@ public class Game {
                     switch (choice) {
                         case 1 -> {
                             hasVisitedFort = true;
-                            traveler.buyFortSupplies();
+                            buyFortSupplies();
                         }
                         case 3 -> {
                             exitGame();
@@ -209,12 +322,12 @@ public class Game {
                 dailyTravel();
                 meetRiders();
                 traveler.setTotalTurns(traveler.getTotalTurns() + 1);
-                if (traveler.getOxen() < 0) traveler.setOxen(0);
-                if (traveler.getFood() < 0) traveler.setFood(0);
-                if (traveler.getAmmunition() < 0) traveler.setAmmunition(0);
-                if (traveler.getClothing() < 0) traveler.setClothing(0);
-                if (traveler.getMisc() < 0) traveler.setMisc(0);
-                finalTurn(200 + (traveler.getOxen() - 220) / 5 + rng.nextInt(10));
+                if (traveler.oxen.getAmount() < 0) traveler.oxen.setAmount(0);
+                if (traveler.food.getAmount() < 0) traveler.food.setAmount(0);
+                if (traveler.ammunition.getAmount() < 0) traveler.ammunition.setAmount(0);
+                if (traveler.clothing.getAmount() < 0) traveler.clothing.setAmount(0);
+                if (traveler.misc.getAmount() < 0) traveler.misc.setAmount(0);
+                finalTurn(200 + (traveler.oxen.getAmount() - 220) / 5 + rng.nextInt(10));
             }
 
         }
@@ -237,20 +350,20 @@ public class Game {
                         System.out.println("Event 1");
                         System.out.println("Wagon breaks down--lose time and supplies fixing it");
                         traveler.setMilesTraveled(-(15 + rng.nextInt(5)));
-                        traveler.setMisc(-8);
+                        traveler.misc.setAmount(-8);
                     }
                     case 2 -> {
                         System.out.println("Event 2");
                         System.out.println("Ox injures leg--slows you down rest of trip");
                         traveler.setMilesTraveled(-25);
-                        traveler.setOxen(-20);
+                        traveler.oxen.setAmount(-20);
                     }
                     case 3 -> {
                         System.out.println("Event 3");
                         System.out.println("Bad luck--your daughter broke her arm");
                         System.out.println("You had to stop and use supplies to make a sling");
                         traveler.setMilesTraveled(-(5 + rng.nextInt(4)));
-                        traveler.setMisc(-(rng.nextInt(3)+2));
+                        traveler.misc.setAmount(-(rng.nextInt(3)+2));
                     }
                     case 4 -> {
                         System.out.println("Event 4");
@@ -270,16 +383,16 @@ public class Game {
                     case 7 -> {
                         System.out.println("Event 7");
                         System.out.println("Heavy rains---time and supplies lost");
-                        traveler.setFood(-10);
-                        traveler.setAmmunition(-500);
-                        traveler.setMisc(-15);
+                        traveler.food.setAmount(-10);
+                        traveler.ammunition.setAmount(-500);
+                        traveler.misc.setAmount(-15);
                         traveler.setMilesTraveled(-(5 + rng.nextInt(10)));
                     }
                     case 8 -> {
                         System.out.println("Event 8");
                         int elapsedSeconds = fireWeapon().entrySet().iterator().next().getValue();
-                        traveler.setAmmunition(-elapsedSeconds * 20);
-                        if (traveler.getAmmunition() >= 0) {
+                        traveler.ammunition.setAmount(-elapsedSeconds * 20);
+                        if (traveler.ammunition.getAmount() >= 0) {
                             if (elapsedSeconds <= 1) {
                                 System.out.println("Quickest draw outside of Dodge City!!!");
                                 System.out.println("You got 'em!");
@@ -288,21 +401,21 @@ public class Game {
                                 System.out.println("You got shot in the leg and they took one of your oxen");
                                 traveler.injured = true;
                                 System.out.println("Better have a doc look at your wound");
-                                traveler.setMisc(-5);
-                                traveler.setOxen(-20);
+                                traveler.misc.setAmount(-5);
+                                traveler.oxen.setAmount(-20);
                             }
                         } else {
                             System.out.println("You ran out of bullets---they get lots of cash");
-                            traveler.setCashBalance(traveler.getCashBalance()/3);
+                            traveler.cashBalance.setAmount(traveler.cashBalance.getAmount()/3);
                         }
                     }
                     case 9 -> {
                         System.out.println("Event 9");
                         System.out.println("There was a fire in your wagon--food and supplies damaged");
-                        traveler.setFood(-40);
-                        traveler.setAmmunition(-400);
+                        traveler.food.setAmount(-40);
+                        traveler.ammunition.setAmount(-400);
                         traveler.setMilesTraveled(-(3 + rng.nextInt(8)));
-                        traveler.setMisc(-15);
+                        traveler.misc.setAmount(-15);
                     }
                     case 10 -> {
                         System.out.println("Event 10");
@@ -312,32 +425,32 @@ public class Game {
                     case 11 -> {
                         System.out.println("Event 11");
                         System.out.println("You killed a venomous snake after it bit you");
-                        traveler.setAmmunition(-10);
-                        traveler.setMisc(-5);
-                        if (traveler.getMisc() <= 0) {
+                        traveler.ammunition.setAmount(-10);
+                        traveler.misc.setAmount(-5);
+                        if (traveler.misc.getAmount() <= 0) {
                             youDied("You die of snakebite since you have no medicine");
                         }
                     }
                     case 12 -> {
                         System.out.println("Event 12");
                         System.out.println("Wagon gets swamped fording river---lose food and clothes");
-                        traveler.setFood(-30);
-                        traveler.setClothing(-20);
+                        traveler.food.setAmount(-30);
+                        traveler.clothing.setAmount(-20);
                         traveler.setMilesTraveled(-(20 + rng.nextInt(20)));
                     }
                     case 13 -> {
                         System.out.println("Event 13");
                         System.out.println("Wild animals attack!");
                         int elapsedSeconds = fireWeapon().entrySet().iterator().next().getValue();
-                        if (traveler.getAmmunition() > 39) {
+                        if (traveler.ammunition.getAmount() > 39) {
                             if (elapsedSeconds > 2) {
                                 System.out.println("Slow on the draw---they got at your food and clothes");
                             } else {
                                 System.out.println("Nice shootin' pardner---they didn't get much");
                             }
-                            traveler.setAmmunition(-elapsedSeconds * 20);
-                            traveler.setClothing(-elapsedSeconds * 4);
-                            traveler.setFood(-elapsedSeconds * 8);
+                            traveler.ammunition.setAmount(-elapsedSeconds * 20);
+                            traveler.clothing.setAmount(-elapsedSeconds * 4);
+                            traveler.food.setAmount(-elapsedSeconds * 8);
                         } else {
                             traveler.injured = true;
                             youDied("You were too low on bullets--the wolves overpowered you and you died from your injuries");
@@ -346,7 +459,7 @@ public class Game {
                     case 14 -> {
                         System.out.println("Event 14");
                         String doOrDoNot = "";
-                        if (traveler.getClothing() >= 22 + rng.nextInt(4)) {
+                        if (traveler.clothing.getAmount() >= 22 + rng.nextInt(4)) {
                             doOrDoNot = "have enough";
                         } else {
                             doOrDoNot = "don't have enough";
@@ -362,7 +475,7 @@ public class Game {
                     case 16 -> {
                         System.out.println("Event 16");
                         System.out.println("Helpful Indians show you where to find more food");
-                        traveler.setFood(14);
+                        traveler.food.setAmount(14);
                     }
                     default -> throw new IllegalArgumentException();
                 }
@@ -408,15 +521,15 @@ public class Game {
             case 1 -> {   // run
                 if (traveler.ridersAreHostile) {
                     traveler.setMilesTraveled(20);
-                    traveler.setMisc(-15);
-                    traveler.setAmmunition(-150);
-                    traveler.setOxen(-40);
+                    traveler.misc.setAmount(-15);
+                    traveler.ammunition.setAmount(-150);
+                    traveler.oxen.setAmount(-40);
                     System.out.println("Riders were hostile--check for losses.");
-                    if (traveler.getAmmunition() >= 0) selectEvent();
+                    if (traveler.ammunition.getAmount() >= 0) selectEvent();
                     youDied("You ran out of bullets and got massacred by the riders.");
                 } else {
                     traveler.setMilesTraveled(15);
-                    traveler.setOxen(-10);
+                    traveler.oxen.setAmount(-10);
                     System.out.println("Riders were friendly, but check for possible losses.");
                     checkForLosses();
                 }
@@ -424,11 +537,11 @@ public class Game {
             case 2 -> {   // attack
                 if (traveler.ridersAreHostile) {
                     int elapsedSeconds = fireWeapon().entrySet().iterator().next().getValue();
-                    traveler.setAmmunition(-(elapsedSeconds * 40 + 80));
+                    traveler.ammunition.setAmount(-(elapsedSeconds * 40 + 80));
                     fightRiders(elapsedSeconds);
                 } else {
                     traveler.setMilesTraveled(-5);
-                    traveler.setAmmunition(-100);
+                    traveler.ammunition.setAmount(-100);
                     System.out.println("Riders were friendly, but check for possible losses.");
                     checkForLosses();
                 }
@@ -439,8 +552,8 @@ public class Game {
                         System.out.println("They did not attack, but check for possible losses.");
                         checkForLosses();
                     } else {
-                        traveler.setAmmunition(-150);
-                        traveler.setMisc(-15);
+                        traveler.ammunition.setAmount(-150);
+                        traveler.misc.setAmount(-15);
                         System.out.println("They did attack.");
                         fireWeapon();
                         System.out.println("Check for possible losses.");
@@ -454,7 +567,7 @@ public class Game {
             case 4 -> {   // circle wagons
                 if (traveler.ridersAreHostile) {
                     int elapsedSeconds = fireWeapon().entrySet().iterator().next().getValue();
-                    traveler.setAmmunition(-(elapsedSeconds * 30 + 80));
+                    traveler.ammunition.setAmount(-(elapsedSeconds * 30 + 80));
                     traveler.setMilesTraveled(-25);
                     fightRiders(elapsedSeconds);
                 } else {
@@ -467,7 +580,7 @@ public class Game {
     }
 
     public void fightRiders(int elapsedSeconds) {
-        if (traveler.getAmmunition() < 0) {
+        if (traveler.ammunition.getAmount() < 0) {
             youDied("You ran out of bullets and got massacred by the riders.");
         } else {
             if (elapsedSeconds <= 1) {
@@ -498,7 +611,7 @@ public class Game {
         int newFood = 0;
         int usedAmmo;
 
-        if (traveler.getAmmunition() < 40) {
+        if (traveler.ammunition.getAmount() < 40) {
             System.out.println("Tough---you need more bullets to go hunting");
             return;
         }
@@ -520,13 +633,13 @@ public class Game {
         } else {
             System.out.println("You missed---and your dinner got away.....");
             usedAmmo = 10 + 3 * elapsedSeconds;
-            if (traveler.getFood() < 13) {
+            if (traveler.food.getAmount() < 13) {
                 youDied("You ran out of food and starved to death");
             }
         }
 
-        traveler.setFood(newFood);
-        traveler.setAmmunition(-usedAmmo);
+        traveler.food.setAmount(newFood);
+        traveler.ammunition.setAmount(-usedAmmo);
         traveler.setMilesTraveled(-45);
     }
 
@@ -561,8 +674,8 @@ public class Game {
                         checkPassesCleared();
                     } else {
                         System.out.println("Wagon damaged!-lost time and supplies");   // line 4790
-                        traveler.setMisc(-5);   // line 4800
-                        traveler.setAmmunition(-200);   // line 4810
+                        traveler.misc.setAmount(-5);   // line 4800
+                        traveler.ammunition.setAmount(-200);   // line 4810
                         traveler.setMilesTraveled(-(20 + rng.nextInt(30)));   // line 4820
                     }
                 } else {
@@ -591,7 +704,7 @@ public class Game {
     }
 
     public void checkMiscAndBlizzard() {
-        if (traveler.getMisc() < 0) {   // line 6440
+        if (traveler.misc.getAmount() < 0) {   // line 6440
             youDied("You ran out of medical supplies and died from pneumonia.");
         } else if (traveler.blizzard || traveler.getMilesTraveled() <=950) {   // line 6450
             traveler.southPassSettingMileage = true;   // line 4950
@@ -601,17 +714,17 @@ public class Game {
     public void blizzardInMountains() {
         System.out.println("Blizzard in mountain pass--time and supplies lost");   // line 4970
         traveler.blizzard = true;   // line 4980
-        traveler.setFood(-25);   // line 4990
-        traveler.setMisc(-10);   // line 5000
-        traveler.setAmmunition(-300);   // line 5010
+        traveler.food.setAmount(-25);   // line 4990
+        traveler.misc.setAmount(-10);   // line 5000
+        traveler.ammunition.setAmount(-300);   // line 5010
         traveler.setMilesTraveled(-(30 + rng.nextInt(40)));   // line 5020
-        if (traveler.getClothing() < 18 + rng.nextInt(2)) {   // line 5030
+        if (traveler.clothing.getAmount() < 18 + rng.nextInt(2)) {   // line 5030
             illness();
         }
     }
 
     public void visitDoctor(String reason) {
-        int currentCash = traveler.getCashBalance();
+        int currentCash = traveler.cashBalance.getAmount();
         if (reason.equals("illness")) {
             System.out.println("You are sick.");
             traveler.sick = false;
@@ -627,16 +740,16 @@ public class Game {
             youDied("You can't afford a doctor. You died from your " + reason + ".");
         }
 
-        traveler.setCashBalance(currentCash);
+        traveler.cashBalance.setAmount(currentCash);
     }
 
     public void finalTurn(int travelThisTurn) {
-        int avgTravelPerTurn = 200 + (traveler.getOxen() - 220)/5 + rng.nextInt(10);
+        int avgTravelPerTurn = 200 + (traveler.oxen.getAmount() - 220)/5 + rng.nextInt(10);
         double fractionOfTurn = ((double) travelThisTurn / avgTravelPerTurn);
         System.out.println("fractionOfTurn: " + fractionOfTurn);
-        System.out.println("food before: " + traveler.getFood());
-        traveler.setFood((int) -((1 - fractionOfTurn) * ( 8 * 5 * traveler.getEatingChoice())));
-        System.out.println("food after: " + traveler.getFood());
+        System.out.println("food before: " + traveler.food.getAmount());
+        traveler.food.setAmount((int) -((1 - fractionOfTurn) * ( 8 * 5 * traveler.getEatingChoice())));
+        System.out.println("food after: " + traveler.food.getAmount());
         System.out.println("You finally arrived at Oregon City after 2040 long miles---Hooray!!!!!" +
                 " A real pioneer.");
         int dayOfTheYear = 88 + traveler.getTotalTurns() * 14 + (int) fractionOfTurn * 14;
@@ -667,7 +780,7 @@ public class Game {
 
     public void eat() {
         int choice = 0;
-        int food = traveler.getFood();
+        int food = traveler.food.getAmount();
 
         System.out.println("You have " + food + " food left.");
         System.out.println("Do you want to eat (1) poorly, (2) moderately, or (3) well?");
@@ -685,24 +798,36 @@ public class Game {
             System.out.println("You can't eat that well");
             eat();
         } else {
-            traveler.setFood(-(8 + 5 * choice));
+            traveler.food.setAmount(-(8 + 5 * choice));
         }
         traveler.setEatingChoice(choice);
     }
 
     public void dailyTravel() {
         traveler.setMilesPreviousTurn(traveler.getMilesTraveled());
-        int travelThisTurn = 200 + (traveler.getOxen() - 220)/5 + rng.nextInt(10);
+        int travelThisTurn = 200 + (traveler.oxen.getAmount() - 220)/5 + rng.nextInt(10);
         traveler.setMilesTraveled(travelThisTurn);
         if (traveler.getMilesTraveled() >= 2040) finalTurn(travelThisTurn);
     }
 
     public void printSupplies() {
         System.out.println("Current supplies:");
-        System.out.println("Food - " + traveler.getFood());
-        System.out.println("Ammunition - " + traveler.getAmmunition());
-        System.out.println("Clothing - " + traveler.getClothing());
-        System.out.println("Miscellaneous - " + traveler.getMisc());
+        System.out.println("Food - " + traveler.food.getAmount());
+        System.out.println("Ammunition - " + traveler.ammunition.getAmount());
+        System.out.println("Clothing - " + traveler.clothing.getAmount());
+        System.out.println("Miscellaneous - " + traveler.misc.getAmount());
+    }
+
+    public static void pressEnterToContinue() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Press enter to continue...");
+        sc.nextLine();
+        System.out.println("___________________________________________________________________________________________");
+    }
+
+    public static void exitGame() {
+        System.out.println("Thanks for playing!");
+        System.exit(0);
     }
 
 }

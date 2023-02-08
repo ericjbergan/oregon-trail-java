@@ -3,12 +3,12 @@ package ericb.oregontrail;
 import java.util.*;
 
 public class Traveler {
-    private int cashBalance = 700;
-    private int oxen = -1;
-    private int food = -1;
-    private int ammunition = -1;
-    private int clothing = -1;
-    private int misc = -1;
+    Resource cashBalance = new Resource("cashBalance", 700);
+    Resource oxen = new Resource("oxen", 0);
+    Resource food = new Resource("food", 0);
+    Resource ammunition = new Resource("ammunition", 0);
+    Resource clothing = new Resource("clothing", 0);
+    Resource misc = new Resource("misc", 0);
     boolean insuffClothing = false;
     boolean clearedSouthPass = false;
     boolean southPassSettingMileage = false;
@@ -23,61 +23,14 @@ public class Traveler {
     private int travelHandicap = 0;
     private int eatingChoice = 0;
     private int milesPreviousTurn = 0;
-    private Random rng;
-    private Scanner sc;
+    private final Scanner sc;
 
-    public Traveler(Random rng) {
-        this.rng = rng;
+    public Traveler(Scanner sc) {
+        this.sc = sc;
     }
 
-    public int getCashBalance() {
-        return cashBalance;
-    }
-
-    public void setCashBalance(int cashBalance) {
-        this.cashBalance = cashBalance;
-    }
-
-    public int getOxen() {
-        return oxen;
-    }
-
-    public void setOxen(int oxen) {
-
-        this.oxen += oxen;
-    }
-
-    public int getFood() {
-        return food;
-    }
-
-    public void setFood(int food) {
-        this.food += food;
-    }
-
-    public int getAmmunition() {
-        return ammunition;
-    }
-
-    public void setAmmunition(int ammunition) {
-
-        this.ammunition += ammunition;
-    }
-
-    public int getClothing() {
-        return clothing;
-    }
-
-    public void setClothing(int clothing) {
-        this.clothing += clothing;
-    }
-
-    public int getMisc() {
-        return misc;
-    }
-
-    public void setMisc(int misc) {
-        this.misc += misc;
+    public Resource[] getResources() {
+        return new Resource[]{oxen, food, ammunition, clothing, misc};
     }
 
     public boolean hasInsuffClothing() {
@@ -219,194 +172,9 @@ public class Traveler {
         this.milesPreviousTurn = milesPreviousTurn;
     }
 
-    private void nextBoundedInt(int min, int max) {
 
-    }
 
-    public void buyInitialSupplies() {
-        int cash = 700;
-        int oxen = -1;
-        int food = -1;
-        int ammunition = -1;
-        int clothing = -1;
-        int misc = -1;
 
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("\nHow much do you want to spend on your oxen team? Enter between 200-300.");
-        while (oxen < 200 || oxen > 300) {
-
-            try {
-                String newInput = sc.nextLine();
-                oxen = Integer.parseInt(newInput);
-                if (oxen < 200 || oxen > 300) {
-                    throw new IllegalArgumentException("Please enter a number between 200 and 300...");
-                }
-                cash -= oxen;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.oxen = oxen;
-        }
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("\nHow much do you want to spend on your food? Enter between 0-" + cash);
-        while (food < 0 || food > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                food = Integer.parseInt(newInput);
-                if (food < 0 || food > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= food;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.food = food;
-        }
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("How much do you want to spend on ammunition? Enter between 0-" + cash
-                + ". Remember, each dollar spent buys 50 bullets.");
-        while (ammunition < 0 || ammunition > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                ammunition = Integer.parseInt(newInput);
-                if (ammunition < 0 || ammunition > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= ammunition;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.ammunition = ammunition * 50;
-        }
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("How much do you want to spend on clothing? Enter between 0-" + cash);
-        while (clothing < 0 || clothing > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                clothing = Integer.parseInt(newInput);
-                if (clothing < 0 || clothing > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= clothing;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.clothing = clothing;
-        }
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("How much do you want to spend on miscellaneous supplies? Enter between 0-" + cash);
-        while (misc < 0 || misc > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                misc = Integer.parseInt(newInput);
-                if (misc < 0 || misc > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= misc;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.misc = misc;
-        }
-
-        cashBalance = cash;
-    }
-
-    public void buyFortSupplies() {
-        int cash = cashBalance;
-        int newFood = -1;
-        int newAmmunition = -1;
-        int newClothing = -1;
-        int newMisc = -1;
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("\nHow much do you want to spend on your food? Enter between 0-" + cash);
-        while (newFood < 0 || newFood > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                newFood = Integer.parseInt(newInput);
-                if (newFood < 0 || newFood > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= newFood;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-            this.food = (int) (this.food + Math.round(0.667 * newFood));
-        }
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("How much do you want to spend on ammunition? Enter between 0-" + cash
-                + ". Remember, each dollar spent buys 50 bullets.");
-        while (newAmmunition < 0 || newAmmunition > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                newAmmunition = Integer.parseInt(newInput);
-                if (newAmmunition < 0 || newAmmunition > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= newAmmunition;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.ammunition = (int) (this.ammunition + Math.round(0.667 * newAmmunition) * 50);
-        }
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("How much do you want to spend on clothing? Enter between 0-" + cash);
-        while (newClothing < 0 || newClothing > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                newClothing = Integer.parseInt(newInput);
-                if (newClothing < 0 || newClothing > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= newClothing;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.clothing = (int) (this.clothing + Math.round(0.667 * newClothing));
-        }
-
-        System.out.println("\nCurrent cash balance: " + cash);
-        System.out.println("How much do you want to spend on miscellaneous supplies? Enter between 0-" + cash);
-        while (newMisc < 0 || newMisc > cash) {
-
-            try {
-                String newInput = sc.nextLine();
-                newMisc = Integer.parseInt(newInput);
-                if (newMisc < 0 || newMisc > cash) {
-                    throw new IllegalArgumentException("Please enter a number between 0 and " + cash);
-                }
-                cash -= newMisc;
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-
-            this.misc = (int) (this.misc + Math.round(0.667 * newMisc));
-        }
-
-        this.cashBalance = cash;
-        if (totalTurns > 0) milesTraveled -= 45;
-    }
 
 
 
