@@ -14,11 +14,121 @@ public class Game {
     private final Scanner sc = new Scanner(System.in);
     private static final PrintStream out = System.out;
     private Traveler traveler = new Traveler(sc);
-    private GameInputOutput inputOutput = new GameInputOutput(out);
+    private GameInputOutput inputOutput = new GameInputOutput(sc, out);
 
     public Game() {}
 
-    public void buyInitialSupplies() {
+    public void playGame() {
+        inputOutput.needInstructionsPrompt();
+
+        traveler.setMarksmanship(inputOutput.marksmanshipPrompt());
+
+        buySupplies();
+
+        out.println("After all your purchases, you now have " +
+                traveler.cashBalance.getAmount() + " dollars left");
+        out.println("\nJourney begins: Monday, March 29, 1847");
+
+        out.println("Good luck!");
+        pressEnterToContinue();
+
+
+        while (traveler.getMilesTraveled() < 2040) {
+            boolean hasVisitedFort = false;
+            boolean hasHunted = false;
+            int choice = 0;
+
+
+            try {
+                out.println("Today's date: Monday, " + DATES[traveler.getTotalTurns()] + ", 1847");
+            } catch (NullPointerException e) {
+                youDied("Happy Holidays! You took too long getting to your destination and " +
+                        "died in the first blizzard of winter.");
+            }
+
+            if (traveler.food.getAmount() < 13) {
+                out.println("You'd better do some hunting or buy food and soon!!!");
+            }
+
+            if (traveler.isSick()) visitDoctor("illness");
+            if (traveler.isInjured()) visitDoctor("injuries");
+
+            out.println("\nTotal mileage is " + traveler.getMilesTraveled());
+            out.println("Your current supplies:");
+            out.println("food - " + traveler.food.getAmount());
+            out.println("ammunition - " + traveler.ammunition.getAmount());
+            out.println("clothing - " + traveler.clothing.getAmount());
+            out.println("misc supplies - " + traveler.misc.getAmount());
+            pressEnterToContinue();
+
+            while (choice != 3) {
+                if (!hasVisitedFort && !hasHunted) {
+                    out.println("\nDo you want to (1) stop at the next fort, (2) hunt, (3) continue traveling, " +
+                            "or (4) exit game?");
+
+                    choice = inputOutput.turnInitialPrompt();
+
+                    switch (choice) {
+                        case 1 -> {
+                            hasVisitedFort = true;
+                            traveler.setVisitingFort(true);
+                            buyFortSupplies();
+                            traveler.setVisitingFort(false);
+                        }
+                        case 2 -> {
+                            hasHunted = true;
+                            hunt();
+                        }
+                        case 4 -> {
+                            exitGame();
+                        }
+                    }
+                } else if (!hasVisitedFort) {
+                    out.println("\nDo you want to (1) stop at the next fort, (2) exit game, " +
+                            "or (3) continue traveling?");
+                    choice = inputOutput.turn3ChoicesPrompt();
+
+                    switch (choice) {
+                        case 1 -> {
+                            hasVisitedFort = true;
+                            traveler.setVisitingFort(true);
+                            buyFortSupplies();
+                            traveler.setVisitingFort(false);
+                        }
+                        case 2 -> {
+                            exitGame();
+                        }
+                    }
+                } else if (!hasHunted) {
+                    out.println("\nDo you want to (1) hunt, (2) exit game, or (3) continue traveling?");
+                    choice = inputOutput.turn3ChoicesPrompt();
+
+                    switch (choice) {
+                        case 1 -> {
+                            hunt();
+                        }
+                        case 2 -> {
+                            exitGame();
+                        }
+                    }
+                }
+
+                eat();
+                dailyTravel();
+                meetRiders();
+                traveler.setTotalTurns();
+                if (traveler.oxen.getAmount() < 0) traveler.oxen.setAmount(0);
+                if (traveler.food.getAmount() < 0) traveler.food.setAmount(0);
+                if (traveler.ammunition.getAmount() < 0) traveler.ammunition.setAmount(0);
+                if (traveler.clothing.getAmount() < 0) traveler.clothing.setAmount(0);
+                if (traveler.misc.getAmount() < 0) traveler.misc.setAmount(0);
+
+                Game.pressEnterToContinue();
+            }
+        }
+    }
+
+    public void buySupplies() {
         Resource[] resources = traveler.getResources();
 
         for (Resource resource : resources) {
@@ -29,7 +139,7 @@ public class Game {
                 max = 300;
             }
 
-            out.println("\nCurrent cash balance: " + max);
+            out.println("\nCurrent cash balance: " + traveler.cashBalance.getAmount());
             out.printf(
                     "\nHow much do you want to spend on %s? Enter between %d-%d.%n", resource.getName(), min, max);
             while (true) {
@@ -143,152 +253,6 @@ public class Game {
 //            }
 //        }
 //    }
-
-    public void playGame() {
-        String instructions = "";
-
-        while (!instructions.equalsIgnoreCase("y") && !instructions.equalsIgnoreCase("n")) {
-            out.println("Do you need instructions  (y/n)");
-            instructions = sc.nextLine();
-        }
-
-        if (instructions.equalsIgnoreCase("y")) inputOutput.printInstructions();
-
-        traveler.setMarksmanship();
-
-        buyInitialSupplies();
-        out.println("After all your purchases, you now have " +
-                traveler.cashBalance.getAmount() + " dollars left");
-        out.println("\nJourney begins: Monday, March 29, 1847");
-
-        pressEnterToContinue();
-
-        out.println("Good luck!");
-
-        while (traveler.getMilesTraveled() < 2040) {
-            boolean hasVisitedFort = false;
-            boolean hasHunted = false;
-            int choice = 0;
-
-            
-            try {
-                out.println("Today's date: Monday, " + DATES[traveler.getTotalTurns()] + ", 1847");
-            } catch (NullPointerException e) {
-                youDied("Happy Holidays! You took too long getting to your destination and " +
-                        "died in the first blizzard of winter.");
-            }
-
-            if (traveler.food.getAmount() < 13) {
-                out.println("You'd better do some hunting or buy food and soon!!!");
-            }
-
-            if (traveler.isSick()) visitDoctor("illness");
-            if (traveler.isInjured()) visitDoctor("injuries");
-
-            out.println("\nTotal mileage is " + traveler.getMilesTraveled());
-            out.println("Your current supplies:");
-            out.println("food - " + traveler.food.getAmount());
-            out.println("ammunition - " + traveler.ammunition.getAmount());
-            out.println("clothing - " + traveler.clothing.getAmount());
-            out.println("misc supplies - " + traveler.misc.getAmount());
-
-            while (choice != 3) {
-                if (!hasVisitedFort && !hasHunted) {
-                    out.println("\nDo you want to (1) stop at the next fort, (2) hunt, (3) continue traveling, " +
-                            "or (4) exit game?");
-                    while (choice < 1 || choice > 4) {
-                        try {
-                            String input = sc.nextLine();
-                            choice = Integer.parseInt(input);
-                            if (choice < 1 || choice > 4) throw new IllegalArgumentException();
-                        } catch (Exception e) {
-                            out.println(e.getMessage());
-                        }
-                    }
-
-                    switch (choice) {
-                        case 1 -> {
-                            hasVisitedFort = true;
-                            traveler.setVisitingFort(true);
-                            buyFortSupplies();
-                            traveler.setVisitingFort(false);
-                        }
-                        case 2 -> {
-                            hasHunted = true;
-                            hunt();
-                        }
-                        case 4 -> {
-                            exitGame();
-                        }
-                    }
-                } else if (!hasVisitedFort) {
-                    out.println("\nDo you want to (1) stop at the next fort, (2) exit game, " +
-                            "or (3) continue traveling?");
-                    String input = sc.nextLine();
-                    choice = Integer.parseInt(input);
-                    while (choice < 1 || choice > 3) {
-                        try {
-                            input = sc.nextLine();
-                            choice = Integer.parseInt(input);
-                            if (choice < 1 || choice > 3) {
-                                throw new IllegalArgumentException("Please enter a number between 1 and 2");
-                            }
-                        } catch (Exception e) {
-                            out.println("Please enter a number between 1 and 2");
-                        }
-                    }
-
-                    switch (choice) {
-                        case 1 -> {
-                            hasVisitedFort = true;
-                            traveler.setVisitingFort(true);
-                            buyFortSupplies();
-                            traveler.setVisitingFort(false);
-                        }
-                        case 3 -> {
-                            exitGame();
-                        }
-                    }
-                } else if (!hasHunted) {
-                    out.println("\nDo you want to (1) hunt, (2) exit game, or (3) continue traveling?");
-                    String input = sc.nextLine();
-                    choice = Integer.parseInt(input);
-                    while (choice < 1 || choice > 3) {
-                        try {
-                            input = sc.nextLine();
-                            choice = Integer.parseInt(input);
-                            if (choice < 1 || choice > 3) {
-                                throw new IllegalArgumentException("Please enter a number between 1 and 3");
-                            }
-                        } catch (Exception e) {
-                            out.println(e.getMessage());
-                        }
-                    }
-
-                    switch (choice) {
-                        case 1 -> {
-                            hasHunted = true;
-                            hunt();
-                        }
-                        case 2 -> {
-                            exitGame();
-                        }
-                    }
-                }
-
-                eat();
-                dailyTravel();
-                meetRiders();
-                traveler.setTotalTurns(traveler.getTotalTurns() + 1);
-                if (traveler.oxen.getAmount() < 0) traveler.oxen.setAmount(0);
-                if (traveler.food.getAmount() < 0) traveler.food.setAmount(0);
-                if (traveler.ammunition.getAmount() < 0) traveler.ammunition.setAmount(0);
-                if (traveler.clothing.getAmount() < 0) traveler.clothing.setAmount(0);
-                if (traveler.misc.getAmount() < 0) traveler.misc.setAmount(0);
-                finalTurn(200 + (traveler.oxen.getAmount() - 220) / 5 + rng.nextInt(10));
-            }
-        }
-    }
 
     public void selectEvent() {
         int eventCounter = 0;
@@ -463,16 +427,7 @@ public class Game {
                 (4) circle wagons - good defense, but takes time and maybe not necessary""");
         if (Math.random() <= 0.2) traveler.setRidersAreHostile(!traveler.ridersAreHostile());
 
-        while (tacticsChoice < 1 || tacticsChoice > 4) {
-            try {
-                String input = sc.nextLine();
-                tacticsChoice = Integer.parseInt(input);
-                if (tacticsChoice < 1 || tacticsChoice > 4) throw new IllegalArgumentException("Please enter a" +
-                        "number between 1 and 4.");
-            } catch (Exception e) {
-                out.println(e.getMessage());
-            }
-        }
+        tacticsChoice = inputOutput.tacticsChoice();
 
         switch (tacticsChoice) {
             case 1 -> {   // run
@@ -606,15 +561,8 @@ public class Game {
         int index = rng.nextInt(4);
         String[] typeChoiceArray = new String[] {"bang", "blam", "pow", "wham"};
         String wordToType = typeChoiceArray[index];
-        Map<String, Integer> useWeapon = new HashMap<>();
-        out.println("Type '" + wordToType + "' and hit enter");
-        long start = System.currentTimeMillis();
-        String input = sc.nextLine();
-        long end = System.currentTimeMillis();
-        int elapsedSeconds = (int) Math.round(((end - start) / 1000F) * 1.2) - (traveler.getMarksmanship() - 1);
-        useWeapon.put(input, elapsedSeconds);
 
-        return useWeapon;
+        return inputOutput.fireWeapon(wordToType, traveler.getMarksmanship());
     }
 
     public void checkMountains() {
@@ -739,17 +687,13 @@ public class Game {
     public void youDied(String causeOfDeath) {
         out.println(causeOfDeath);
         pressEnterToContinue();
-        out.println("Due to your unfortunate situation, there a few formalities we must go through.");
-        out.println("Would you like a minister?");
-        String input = sc.nextLine();
-        out.println("Would you like a fancy funeral?");
-        input = sc.nextLine();
-        out.println("Would you like us to inform your next of kin?");
-        input = sc.nextLine();
-        if (input.equalsIgnoreCase("n")) {
-            out.println("But your Aunt Sadie in St. Louis is really worried about you.");
-        } else {
+
+        String input = inputOutput.deathPrompt();
+
+        if (input.equalsIgnoreCase("y")) {
             out.println("That will be $4.50 for th telegraph charge.");
+        } else {
+            out.println("But your Aunt Sadie in St. Louis is really worried about you.");
         }
         out.println("""
                 We thank you for this information and we are sorry you didn't make it to the great territory of Oregon.

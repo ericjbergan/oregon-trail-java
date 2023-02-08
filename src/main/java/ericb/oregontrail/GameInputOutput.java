@@ -1,12 +1,28 @@
 package ericb.oregontrail;
 
 import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class GameInputOutput {
+    private final Scanner sc;
     private final PrintStream out;
 
-    public GameInputOutput(PrintStream out) {
+    public GameInputOutput(Scanner sc, PrintStream out) {
+        this.sc = sc;
         this.out = out;
+    }
+
+    public void needInstructionsPrompt() {
+        String instructions = "";
+
+        while (!instructions.equalsIgnoreCase("y") && !instructions.equalsIgnoreCase("n")) {
+            out.println("Do you need instructions  (y/n)");
+            instructions = sc.nextLine();
+        }
+
+        if (instructions.equalsIgnoreCase("y")) printInstructions();
     }
 
     public void printInstructions() {
@@ -49,4 +65,109 @@ public class GameInputOutput {
 
         Game.pressEnterToContinue();
     }
+
+    public int marksmanshipPrompt() {
+        int marksmanship = 0;
+
+        System.out.println("How good a shot are you with your rifle?");
+        System.out.println("(1) Ace marksman");
+        System.out.println("(2) Good shot");
+        System.out.println("(3) Fair to middlin'");
+        System.out.println("(4) Need more practice");
+        System.out.println("(5) Shaky knees");
+        System.out.println("Enter one of the above -- the better you claim you are, the faster you'll have to be " +
+                "with your gun to be successful.");
+
+        while (marksmanship < 1 || marksmanship > 5) {
+            try {
+                String newInput = sc.nextLine();
+                marksmanship = Integer.parseInt(newInput);
+                if (marksmanship < 1 || marksmanship > 5) throw new IllegalArgumentException();
+            } catch (Exception e) {
+                System.out.println("Please enter a number between 1 and 5...");
+            }
+        }
+
+        return marksmanship;
+
+    }
+
+    public int turnInitialPrompt() {
+        int choice = 0;
+
+        while (choice < 1 || choice > 4) {
+            try {
+                String input = sc.nextLine();
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 4) throw new IllegalArgumentException();
+            } catch (Exception e) {
+                out.println(e.getMessage());
+            }
+        }
+
+        return choice;
+    }
+
+    public int turn3ChoicesPrompt() {
+        int choice = 0;
+
+        while (choice < 1 || choice > 3) {
+            String input = sc.nextLine();
+            choice = Integer.parseInt(input);
+            try {
+                input = sc.nextLine();
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 3) {
+                    throw new IllegalArgumentException("Please enter a number between 1 and 3");
+                }
+            } catch (Exception e) {
+                out.println("Please enter a number between 1 and 3");
+            }
+        }
+
+        return choice;
+    }
+
+    public int tacticsChoice() {
+        int tacticsChoice = 0;
+
+        while (tacticsChoice < 1 || tacticsChoice > 4) {
+            try {
+                String input = sc.nextLine();
+                tacticsChoice = Integer.parseInt(input);
+                if (tacticsChoice < 1 || tacticsChoice > 4) throw new IllegalArgumentException("Please enter a" +
+                        "number between 1 and 4.");
+            } catch (Exception e) {
+                out.println(e.getMessage());
+            }
+        }
+
+        return tacticsChoice;
+    }
+
+    public Map<String, Integer> fireWeapon(String word, int marksmanship) {
+        Map<String, Integer> useWeapon = new HashMap<>();
+
+        out.println("Type '" + word + "' and hit enter");
+        long start = System.currentTimeMillis();
+        String input = sc.nextLine();
+        long end = System.currentTimeMillis();
+        int elapsedSeconds = (int) Math.round(((end - start) / 1000F) * 1.2) - (marksmanship - 1);
+        useWeapon.put(input, elapsedSeconds);
+
+        return useWeapon;
+    }
+
+    public String deathPrompt() {
+        out.println("Due to your unfortunate situation, there a few formalities we must go through.");
+        out.println("Would you like a minister?");
+        String input = sc.nextLine();
+        out.println("Would you like a fancy funeral?");
+        input = sc.nextLine();
+        out.println("Would you like us to inform your next of kin?");
+        input = sc.nextLine();
+
+        return input;
+    }
+
 }

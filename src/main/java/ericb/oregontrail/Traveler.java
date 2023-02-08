@@ -109,27 +109,8 @@ public class Traveler {
         return marksmanship;
     }
 
-    public void setMarksmanship() {
-        marksmanship = 0;
-
-        System.out.println("How good a shot are you with your rifle?");
-        System.out.println("(1) Ace marksman");
-        System.out.println("(2) Good shot");
-        System.out.println("(3) Fair to middlin'");
-        System.out.println("(4) Need more practice");
-        System.out.println("(5) Shaky knees");
-        System.out.println("Enter one of the above -- the better you claim you are, the faster you'll have to be " +
-                "with your gun to be successful.");
-
-        while (marksmanship < 1 || marksmanship > 5) {
-            try {
-                String newInput = sc.nextLine();
-                marksmanship = Integer.parseInt(newInput);
-                if (marksmanship < 1 || marksmanship > 5) throw new IllegalArgumentException();
-            } catch (Exception e) {
-                System.out.println("Please enter a number between 1 and 5...");
-            }
-        }
+    public void setMarksmanship(int marksmanship) {
+        this.marksmanship = marksmanship;
     }
 
     public int getMilesTraveled() {
@@ -144,8 +125,8 @@ public class Traveler {
         return totalTurns;
     }
 
-    public void setTotalTurns(int daysTraveled) {
-        this.totalTurns = daysTraveled;
+    public void setTotalTurns() {
+        this.totalTurns++;
     }
 
     public int getEatingChoice() {
