@@ -18,10 +18,6 @@ public class Resource {
     }
 
     public void setAmount(int amount) {
-        if (name.equals("ammunition")) {
-            amount = amount * 50;
-        }
-
         this.amount += amount;
     }
 }

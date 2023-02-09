@@ -19,7 +19,7 @@ public class Traveler {
     private boolean ridersAreHostile = false;
     private boolean visitingFort = false;
     private int marksmanship;
-    private int totalTurns = 0;
+    private int totalTurns = -1;
     private int milesTraveled = 0;
     private int eatingChoice = 0;
     private int milesPreviousTurn = 0;

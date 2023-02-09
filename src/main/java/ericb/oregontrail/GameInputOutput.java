@@ -35,19 +35,19 @@ public class GameInputOutput {
                 \nYou had saved $900 to spend for the trip, and you've just paid $200 for a wagon. You will
                 need to spend the rest of your money on the following items:""");
         out.println("""
-                \nOxen - You can spend $200-$300 on your team. the more you spend, the faster you'll go because you
-                have better animals""");
+                \nOxen - You can spend $200-$300 on your team. the more you spend, the faster you'll go because
+                you'll have better animals.""");
         out.println("""
-                \nFood - The more you have, the less chance there is of getting sick""");
+                \nFood - The more you have, the less chance there is of getting sick.""");
         out.println("""
                 \nAmmunition - $1 buys a belt of 50 bullets. You will need bullets for attacks by animals and
-                bandits, and for hunting food""");
+                bandits, and for hunting food.""");
         out.println("""
                 \nClothing - This is especially important for the cold weather you will encounter when crossing
-                the mountains""");
+                the mountains.""");
         out.println("""
                 \nMiscellaneous supplies - This includes medicine and other things you will need for sickness
-                and emergency repairs""");
+                and emergency repairs.""");
 
         Game.pressEnterToContinue();
 
@@ -61,7 +61,7 @@ public class GameInputOutput {
                 key, the better luck you'll have with your gun.""");
         out.println("""
                 \nAt each turn, all items are shown in dollar amounts except bullets. When asked to enter\s
-                money amounts, don't use a '$'""");
+                money amounts, don't use a '$'.""");
 
         Game.pressEnterToContinue();
     }
@@ -78,71 +78,22 @@ public class GameInputOutput {
         System.out.println("Enter one of the above -- the better you claim you are, the faster you'll have to be " +
                 "with your gun to be successful.");
 
-        while (marksmanship < 1 || marksmanship > 5) {
-            try {
-                String newInput = sc.nextLine();
-                marksmanship = Integer.parseInt(newInput);
-                if (marksmanship < 1 || marksmanship > 5) throw new IllegalArgumentException();
-            } catch (Exception e) {
-                System.out.println("Please enter a number between 1 and 5...");
-            }
-        }
-
-        return marksmanship;
-
+        return playerChoice(1, 5);
     }
 
-    public int turnInitialPrompt() {
-        int choice = 0;
-
-        while (choice < 1 || choice > 4) {
+    public int playerChoice(int min, int max) {
+        while (true) {
+            int choice;
             try {
                 String input = sc.nextLine();
                 choice = Integer.parseInt(input);
-                if (choice < 1 || choice > 4) throw new IllegalArgumentException();
+                if (choice < min || choice > max) throw new IllegalArgumentException("Please enter a" +
+                        "number between %d and %d.".formatted(min, max));
+                return choice;
             } catch (Exception e) {
                 out.println(e.getMessage());
             }
         }
-
-        return choice;
-    }
-
-    public int turn3ChoicesPrompt() {
-        int choice = 0;
-
-        while (choice < 1 || choice > 3) {
-            String input = sc.nextLine();
-            choice = Integer.parseInt(input);
-            try {
-                input = sc.nextLine();
-                choice = Integer.parseInt(input);
-                if (choice < 1 || choice > 3) {
-                    throw new IllegalArgumentException("Please enter a number between 1 and 3");
-                }
-            } catch (Exception e) {
-                out.println("Please enter a number between 1 and 3");
-            }
-        }
-
-        return choice;
-    }
-
-    public int tacticsChoice() {
-        int tacticsChoice = 0;
-
-        while (tacticsChoice < 1 || tacticsChoice > 4) {
-            try {
-                String input = sc.nextLine();
-                tacticsChoice = Integer.parseInt(input);
-                if (tacticsChoice < 1 || tacticsChoice > 4) throw new IllegalArgumentException("Please enter a" +
-                        "number between 1 and 4.");
-            } catch (Exception e) {
-                out.println(e.getMessage());
-            }
-        }
-
-        return tacticsChoice;
     }
 
     public Map<String, Integer> fireWeapon(String word, int marksmanship) {
@@ -159,6 +110,9 @@ public class GameInputOutput {
     }
 
     public String deathPrompt() {
+        /* Yes, I know the answers to the first two questions are ignored. This is how the original
+        Basic version had it, so I just went with it. */
+
         out.println("Due to your unfortunate situation, there a few formalities we must go through.");
         out.println("Would you like a minister?");
         String input = sc.nextLine();
