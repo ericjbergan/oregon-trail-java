@@ -15,14 +15,12 @@ public class Traveler {
     private boolean clearedBlueMountains = false;
     private boolean injured = false;
     private boolean sick = false;
-    private boolean blizzard = false;
-    private boolean ridersAreHostile = false;
+
     private boolean visitingFort = false;
     private int marksmanship;
-    private int totalTurns = -1;
-    private int milesTraveled = 0;
+
     private int eatingChoice = 0;
-    private int milesPreviousTurn = 0;
+
     private final Scanner sc;
 
     public Traveler(Scanner sc) {
@@ -81,22 +79,6 @@ public class Traveler {
         this.sick = sick;
     }
 
-    public boolean inBlizzard() {
-        return blizzard;
-    }
-
-    public void setBlizzard(boolean inBlizzard) {
-        this.blizzard = inBlizzard;
-    }
-
-    public boolean ridersAreHostile() {
-        return ridersAreHostile;
-    }
-
-    public void setRidersAreHostile(boolean ridersAreHostile) {
-        this.ridersAreHostile = ridersAreHostile;
-    }
-
     public boolean isVisitingFort() {
         return visitingFort;
     }
@@ -113,22 +95,6 @@ public class Traveler {
         this.marksmanship = marksmanship;
     }
 
-    public int getMilesTraveled() {
-        return milesTraveled;
-    }
-
-    public void setMilesTraveled(int milesTraveled) {
-        this.milesTraveled += milesTraveled;
-    }
-
-    public int getTotalTurns() {
-        return totalTurns;
-    }
-
-    public void setTotalTurns() {
-        this.totalTurns++;
-    }
-
     public int getEatingChoice() {
         return eatingChoice;
     }
@@ -136,28 +102,5 @@ public class Traveler {
     public void setEatingChoice(int eatingChoice) {
         this.eatingChoice = eatingChoice;
     }
-
-    public int getMilesPreviousTurn() {
-        return milesPreviousTurn;
-    }
-
-    public void setMilesPreviousTurn(int milesPreviousTurn) {
-        this.milesPreviousTurn = milesPreviousTurn;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

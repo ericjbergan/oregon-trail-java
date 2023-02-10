@@ -19,5 +19,6 @@ public class Resource {
 
     public void setAmount(int amount) {
         this.amount += amount;
+        this.amount = Math.max(0, this.amount);
     }
 }

@@ -69,13 +69,13 @@ public class GameInputOutput {
     public int marksmanshipPrompt() {
         int marksmanship = 0;
 
-        System.out.println("How good a shot are you with your rifle?");
-        System.out.println("(1) Ace marksman");
-        System.out.println("(2) Good shot");
-        System.out.println("(3) Fair to middlin'");
-        System.out.println("(4) Need more practice");
-        System.out.println("(5) Shaky knees");
-        System.out.println("Enter one of the above -- the better you claim you are, the faster you'll have to be " +
+        out.println("How good a shot are you with your rifle?");
+        out.println("(1) Ace marksman");
+        out.println("(2) Good shot");
+        out.println("(3) Fair to middlin'");
+        out.println("(4) Need more practice");
+        out.println("(5) Shaky knees");
+        out.println("Enter one of the above -- the better you claim you are, the faster you'll have to be " +
                 "with your gun to be successful.");
 
         return playerChoice(1, 5);
@@ -87,11 +87,10 @@ public class GameInputOutput {
             try {
                 String input = sc.nextLine();
                 choice = Integer.parseInt(input);
-                if (choice < min || choice > max) throw new IllegalArgumentException("Please enter a" +
-                        "number between %d and %d.".formatted(min, max));
+                if (choice < min || choice > max) throw new IllegalArgumentException();
                 return choice;
             } catch (Exception e) {
-                out.println(e.getMessage());
+                out.printf("Please enter a number between %d and %d.%n", min, max);
             }
         }
     }
