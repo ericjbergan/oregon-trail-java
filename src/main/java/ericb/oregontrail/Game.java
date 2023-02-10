@@ -1,6 +1,11 @@
 package ericb.oregontrail;
 
 import java.io.PrintStream;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 public class Game {
@@ -558,19 +563,19 @@ public class Game {
         traveler.cashBalance.setAmount(currentCash);
     }
 
-    public void finalTurn(int travelThisTurn) {
-        int avgTravelPerTurn = 200 + (traveler.oxen.getAmount() - 220)/5 + rng.nextInt(10);
-        double fractionOfTurn = ((double) travelThisTurn / avgTravelPerTurn);
-        out.println("fractionOfTurn: " + fractionOfTurn);
-        out.println("food before: " + traveler.food.getAmount());
+    public void finalTurn() {
+        double fractionOfTurn = rng.nextInt(14)/(double) 14;
         traveler.food.setAmount((int) -((1 - fractionOfTurn) * ( 8 * 5 * traveler.getEatingChoice())));
-        out.println("food after: " + traveler.food.getAmount());
         out.println("You finally arrived at Oregon City after 2040 long miles---Hooray!!!!!" +
                 " A real pioneer.");
-        int dayOfTheYear = 88 + totalTurns * 14 + (int) fractionOfTurn * 14;
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_YEAR, dayOfTheYear);
-        out.println("Day of year " + dayOfTheYear + " = " + calendar.getTime());
+
+        LocalDate journeyStart = LocalDate.of(1847, Month.MARCH, 29);
+        DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
+        LocalDate finishDate = journeyStart.plusDays(totalTurns * 14L + (int) fractionOfTurn * 14L);
+        String dateFormatted = finishDate.format(DATE_FORMATTER);
+
+        out.printf("Arrived on %s\n\n", dateFormatted);
+
         exitGame();
     }
 
@@ -626,7 +631,7 @@ public class Game {
         milesPreviousTurn = milesTraveled;
         int travelThisTurn = 200 + (traveler.oxen.getAmount() - 220)/5 + rng.nextInt(10);
         milesTraveled += travelThisTurn;
-        if (milesTraveled >= 2040) finalTurn(travelThisTurn);
+        if (milesTraveled >= 2040) finalTurn();
     }
 
     public void printSupplies() {

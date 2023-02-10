@@ -102,7 +102,7 @@ public class GameInputOutput {
         long start = System.currentTimeMillis();
         String input = sc.nextLine();
         long end = System.currentTimeMillis();
-        int elapsedSeconds = (int) Math.round(((end - start) / 1000F) * 1.2) - (marksmanship - 1);
+        int elapsedSeconds = (int) Math.round(((end - start) / 1000F) * 1.5) - (marksmanship - 1);
         useWeapon.put(input, elapsedSeconds);
 
         return useWeapon;
